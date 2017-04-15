@@ -4,19 +4,24 @@ import { Link } from 'dva/router'
 import { menu } from '../../utils'
 
 const topMenus = menu.map(item => item.key)
-const getMenus = function (menuArray, siderFold, parentPath = '/') {
+const getMenus = function (menuArray, siderFold, permissions = [], parentPath = '/') {
   return menuArray.map(item => {
     const linkTo = parentPath + item.key
+    permissions = permissions.map((item) => (item.indexOf('/') !== 0 ? `/${item}` : item))
+    if (permissions.indexOf(linkTo) < 0) {
+      return
+    }
+
     if (item.child) {
       return (
         <Menu.SubMenu key={linkTo} title={<span>{item.icon ? <Icon type={item.icon} /> : ''}{siderFold && topMenus.indexOf(item.key) >= 0 ? '' : item.name}</span>}>
-          {getMenus(item.child, siderFold, `${linkTo}/`)}
+          {getMenus(item.child, siderFold, permissions, `${linkTo}/`)}
         </Menu.SubMenu>
       )
     }
     return (
       <Menu.Item key={linkTo}>
-        <Link to={linkTo}>
+        <Link to={`${linkTo}/`}>
           {item.icon ? <Icon type={item.icon} /> : ''}
           {siderFold && topMenus.indexOf(item.key) >= 0 ? '' : item.name}
         </Link>
@@ -25,8 +30,8 @@ const getMenus = function (menuArray, siderFold, parentPath = '/') {
   })
 }
 
-function Menus ({ siderFold, darkTheme, location, handleClickNavMenu, navOpenKeys, changeOpenKeys }) {
-  const menuItems = getMenus(menu, siderFold)
+function Menus ({ user, siderFold, darkTheme, location, handleClickNavMenu, navOpenKeys, changeOpenKeys }) {
+  const menuItems = getMenus(menu, siderFold, user.permissions)
 
   const getAncestorKeys = (key) => {
     const map = {

@@ -32,6 +32,7 @@ const App = ({ children, location, dispatch, app }) => {
   }
 
   const siderProps = {
+    user,
     siderFold,
     darkTheme,
     location,

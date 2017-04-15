@@ -4,8 +4,9 @@ import styles from './Layout.less'
 import { config } from '../../utils'
 import Menus from './Menu'
 
-function Sider ({ siderFold, darkTheme, location, changeTheme, navOpenKeys, changeOpenKeys }) {
+function Sider ({ user, siderFold, darkTheme, location, changeTheme, navOpenKeys, changeOpenKeys }) {
   const menusProps = {
+    user,
     siderFold,
     darkTheme,
     location,

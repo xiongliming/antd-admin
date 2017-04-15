@@ -7,7 +7,9 @@ const { prefix } = config
 export default {
   namespace: 'app',
   state: {
-    user: {},
+    user: {
+      permissions: [],
+    },
     loginButtonLoading: false,
     menuPopoverVisible: false,
     siderFold: localStorage.getItem(`${prefix}siderFold`) === 'true',
