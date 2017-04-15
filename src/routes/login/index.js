@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import { connect } from 'dva'
-import { Button, Row, Form, Input } from 'antd'
+import { Button, Row, Form, Input, Alert } from 'antd'
 import { config } from '../../utils'
 import styles from './index.less'
 
@@ -14,7 +14,7 @@ const Login = ({
     validateFieldsAndScroll,
   },
 }) => {
-  const { loginLoading } = login
+  const { loginLoading, loginError } = login
 
   function handleOk () {
     validateFieldsAndScroll((errors, values) => {
@@ -53,15 +53,11 @@ const Login = ({
           })(<Input size="large" type="password" onPressEnter={handleOk} placeholder="密码" />)}
         </FormItem>
         <Row>
+          { loginError === '' ? '' : <Alert message={loginError} type="error" closable showIcon />  }
           <Button type="primary" size="large" onClick={handleOk} loading={loginLoading}>
             登录
           </Button>
-          <p>
-            <span>账号：guest</span>
-            <span>密码：guest</span>
-          </p>
         </Row>
-
       </form>
     </div>
   )

@@ -6,6 +6,7 @@ export default {
   namespace: 'login',
   state: {
     loginLoading: false,
+    loginError: '',
   },
 
   effects: {
@@ -17,6 +18,7 @@ export default {
       yield put({ type: 'hideLoginLoading' })
       if (data.success) {
         const from = queryURL('from')
+        yield put({ type: 'loginSuccess' })
         yield put({ type: 'app/queryUser' })
         if (from) {
           yield put(routerRedux.push(from))
@@ -24,11 +26,23 @@ export default {
           yield put(routerRedux.push('/dashboard'))
         }
       } else {
-        throw data
+        yield put({ type: 'loginFail', payload: data.loginError })
+        // throw data
       }
     },
   },
   reducers: {
+    loginSuccess (state) {
+      return {
+        ...state,
+        loginError: '',
+      }
+    },    loginFail (state, { payload: message }) {
+      return {
+        ...state,
+        loginError: message,
+      }
+    },
     showLoginLoading (state) {
       return {
         ...state,
