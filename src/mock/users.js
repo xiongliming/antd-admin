@@ -94,7 +94,6 @@ module.exports = {
     const token = JSON.parse(cookies.token)
     if (token) {
       response.success = token.deadline > new Date().getTime()
-      response.loginError = '会话过期'
     }
     if (response.success) {
       const userItem = adminUsers.filter(_ => _.id === token.id)
@@ -103,6 +102,9 @@ module.exports = {
         user.username = userItem[0].username
         user.id = userItem[0].id
       }
+    } else {
+      res.json({ loginError: '会话过期' })
+      return
     }
     response.user = user
     res.json(response)

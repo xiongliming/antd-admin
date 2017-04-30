@@ -54,6 +54,14 @@ const Routers = function ({ history, app }) {
             }, 'request')
           },
         }, {
+          path: 'dataOperation',
+          getComponent (nextState, cb) {
+            require.ensure([], require => {
+              registerModel(app, require('./models/dataOperation_uploader'))
+              cb(null, require('./routes/dataOperation/'))
+            }, 'dataOperation_uploader')
+          },
+        }, {
           path: 'UIElement/iconfont',
           getComponent (nextState, cb) {
             require.ensure([], require => {

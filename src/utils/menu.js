@@ -5,6 +5,16 @@ module.exports = [
     icon: 'laptop',
   },
   {
+    key: 'dataOperation',
+    name: 'Data Operation',
+    icon: 'database',
+  },
+  {
+    key: 'dataAnalysis',
+    name: 'Data Analysis',
+    icon: 'pie-chart',
+  },
+  {
     key: 'users',
     name: 'User Manage',
     icon: 'user',

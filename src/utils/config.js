@@ -15,5 +15,6 @@ module.exports = {
     userInfo: '/userInfo',
     users: '/users',
     dashboard: '/dashboard',
+    dataOperationUpload: '/dataOperation/upload'
   },
 }

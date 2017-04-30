@@ -37,7 +37,8 @@ export default {
         ...state,
         loginError: '',
       }
-    },    loginFail (state, { payload: message }) {
+    },
+    loginFail (state, { payload: message }) {
       return {
         ...state,
         loginError: message,
