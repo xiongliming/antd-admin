@@ -8,6 +8,19 @@ module.exports = [
     key: 'dataOperation',
     name: 'Data Operation',
     icon: 'database',
+    clickable: false,
+    child: [
+      {
+        key: 'uploader',
+        name: 'Upload Test',
+        icon: 'file-add',
+      },
+      {
+        key: 'testDataTable',
+        name: 'View Test Data',
+        icon: 'file-text',
+      },
+    ],
   },
   {
     key: 'dataAnalysis',

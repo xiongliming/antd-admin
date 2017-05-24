@@ -2,13 +2,13 @@ import React, { PropTypes } from 'react'
 import { Router } from 'dva/router'
 import App from './routes/app'
 
-const cached = {}
+const cached = {};
 const registerModel = (app, model) => {
   if (!cached[model.namespace]) {
-    app.model(model)
+    app.model(model);
     cached[model.namespace] = 1
   }
-}
+};
 
 const Routers = function ({ history, app }) {
   const routes = [
@@ -17,7 +17,7 @@ const Routers = function ({ history, app }) {
       component: App,
       getIndexRoute (nextState, cb) {
         require.ensure([], require => {
-          registerModel(app, require('./models/dashboard'))
+          registerModel(app, require('./models/dashboard'));
           cb(null, { component: require('./routes/dashboard/') })
         }, 'dashboard')
       },
@@ -26,7 +26,7 @@ const Routers = function ({ history, app }) {
           path: 'dashboard',
           getComponent (nextState, cb) {
             require.ensure([], require => {
-              registerModel(app, require('./models/dashboard'))
+              registerModel(app, require('./models/dashboard'));
               cb(null, require('./routes/dashboard/'))
             }, 'dashboard')
           },
@@ -34,7 +34,7 @@ const Routers = function ({ history, app }) {
           path: 'users',
           getComponent (nextState, cb) {
             require.ensure([], require => {
-              registerModel(app, require('./models/users'))
+              registerModel(app, require('./models/users'));
               cb(null, require('./routes/users/'))
             }, 'users')
           },
@@ -42,7 +42,7 @@ const Routers = function ({ history, app }) {
           path: 'login',
           getComponent (nextState, cb) {
             require.ensure([], require => {
-              registerModel(app, require('./models/login'))
+              registerModel(app, require('./models/login'));
               cb(null, require('./routes/login/'))
             }, 'login')
           },
@@ -54,11 +54,11 @@ const Routers = function ({ history, app }) {
             }, 'request')
           },
         }, {
-          path: 'dataOperation',
+          path: 'dataOperation/uploader',
           getComponent (nextState, cb) {
             require.ensure([], require => {
-              registerModel(app, require('./models/dataOperation_uploader'))
-              cb(null, require('./routes/dataOperation/'))
+              registerModel(app, require('./models/dataOperation/uploader'));
+              cb(null, require('./routes/dataOperation/uploader/'))
             }, 'dataOperation_uploader')
           },
         }, {
@@ -134,14 +134,14 @@ const Routers = function ({ history, app }) {
         },
       ],
     },
-  ]
+  ];
 
   return <Router history={history} routes={routes} />
-}
+};
 
 Routers.propTypes = {
   history: PropTypes.object,
   app: PropTypes.object,
-}
+};
 
 export default Routers

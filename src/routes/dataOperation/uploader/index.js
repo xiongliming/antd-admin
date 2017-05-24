@@ -5,36 +5,40 @@ import React from 'react'
 import { Steps, Button, message, Form, Tabs } from 'antd';
 const Step = Steps.Step;
 import { connect } from 'dva'
-import UploadForm from '../../components/Form/UploadForm'
+import UploadForm from '../../../components/Form/UploadForm'
 import styles from './index.less'
 const TabPane = Tabs.TabPane;
 
 
-const Uploader = ({
-                    dispatch,
-                    dataOperation_uploader,
-}) => {
+const Uploader = ({ dispatch, dataOperation_uploader }) => {
   const { currentStepNum, steps } = dataOperation_uploader;
   const handleFormChange = (changedField) => {
-    console.log("handleFormChange>>> ", changedField);
     dispatch({
       type: 'dataOperation_uploader/updateForm',
       payload: { currentStepNum, changedField }
     })
   };
+  const currentForm = <UploadForm key={ steps[currentStepNum].key } step={ steps[currentStepNum] }
+                                  onChange={ handleFormChange } />;
   return (
     <div>
       <Steps current={currentStepNum}>
         { steps.map(item => <Step key={item.title} title={item.title} />) }
       </Steps>
       <div className={styles.content}>
-        <UploadForm key={ steps[currentStepNum].key } step={ steps[currentStepNum] } onChange={ handleFormChange } />
+        { currentForm }
       </div>
       <div className={styles.action}>
         {
           currentStepNum < steps.length - 1
           &&
-          <Button type="primary" onClick={() => dispatch({ type: 'dataOperation_uploader/next' })}>Next</Button>
+          <Button type="primary" onClick={ () => {
+            dispatch({ type: 'dataOperation_uploader/next' });
+            if (currentStepNum === 0) {
+              dispatch({ type: 'dataOperation_uploader/addNewTestInstance', payload: steps[currentStepNum]})
+            }
+            // console.log(steps[currentStepNum])
+          } }>Next</Button>
         }
         {
           currentStepNum === steps.length - 1

@@ -3,11 +3,11 @@ import { Menu, Icon } from 'antd'
 import { Link } from 'dva/router'
 import { menu } from '../../utils'
 
-const topMenus = menu.map(item => item.key)
+const topMenus = menu.map(item => item.key);
 const getMenus = function (menuArray, siderFold, permissions = [], parentPath = '/') {
   return menuArray.map(item => {
-    const linkTo = parentPath + item.key
-    permissions = permissions.map((item) => (item.indexOf('/') !== 0 ? `/${item}` : item))
+    const linkTo = parentPath + item.key;
+    permissions = permissions.map((item) => (item.indexOf('/') !== 0 ? `/${item}` : item));
     if (permissions.indexOf(linkTo) < 0) {
       return
     }
@@ -28,22 +28,22 @@ const getMenus = function (menuArray, siderFold, permissions = [], parentPath = 
       </Menu.Item>
     )
   })
-}
+};
 
 function Menus ({ user, siderFold, darkTheme, location, handleClickNavMenu, navOpenKeys, changeOpenKeys }) {
-  const menuItems = getMenus(menu, siderFold, user.permissions)
+  const menuItems = getMenus(menu, siderFold, user.permissions);
 
   const getAncestorKeys = (key) => {
     const map = {
       '/navigation/navigation2': ['/navigation'],
-    }
+    };
     return map[key] || []
-  }
+  };
 
   const onOpenChange = (openKeys) => {
-    const latestOpenKey = openKeys.find(key => !(navOpenKeys.indexOf(key) > -1))
-    const latestCloseKey = navOpenKeys.find(key => !(openKeys.indexOf(key) > -1))
-    let nextOpenKeys = []
+    const latestOpenKey = openKeys.find(key => !(navOpenKeys.indexOf(key) > -1));
+    const latestCloseKey = navOpenKeys.find(key => !(openKeys.indexOf(key) > -1));
+    let nextOpenKeys = [];
     if (latestOpenKey) {
       nextOpenKeys = getAncestorKeys(latestOpenKey).concat(latestOpenKey)
     }
@@ -51,12 +51,12 @@ function Menus ({ user, siderFold, darkTheme, location, handleClickNavMenu, navO
       nextOpenKeys = getAncestorKeys(latestCloseKey)
     }
     changeOpenKeys(nextOpenKeys)
-  }
+  };
 
   let menuProps = !siderFold ? {
     onOpenChange,
     openKeys: navOpenKeys,
-  } : {}
+  } : {};
 
   return (
     <Menu
@@ -79,6 +79,6 @@ Menus.propTypes = {
   handleClickNavMenu: PropTypes.func,
   navOpenKeys: PropTypes.array,
   changeOpenKeys: PropTypes.func,
-}
+};
 
 export default Menus
