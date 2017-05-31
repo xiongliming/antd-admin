@@ -18,15 +18,14 @@ const Uploader = ({ dispatch, dataOperation_uploader }) => {
       payload: { currentStepNum, changedField }
     })
   };
-  const currentForm = <UploadForm key={ steps[currentStepNum].key } step={ steps[currentStepNum] }
-                                  onChange={ handleFormChange } />;
+  // update current formulation list from db.Formulation
   return (
     <div>
       <Steps current={currentStepNum}>
         { steps.map(item => <Step key={item.title} title={item.title} />) }
       </Steps>
       <div className={styles.content}>
-        { currentForm }
+        <UploadForm key={ steps[currentStepNum].key } step={ steps[currentStepNum] } onChange={ handleFormChange } />
       </div>
       <div className={styles.action}>
         {
@@ -34,9 +33,17 @@ const Uploader = ({ dispatch, dataOperation_uploader }) => {
           &&
           <Button type="primary" onClick={ () => {
             dispatch({ type: 'dataOperation_uploader/next' });
-            if (currentStepNum === 0) {
-              dispatch({ type: 'dataOperation_uploader/addNewTestInstance', payload: steps[currentStepNum]})
+            switch (currentStepNum) {
+              case 0:
+
+              case 1:
+              case 2:
+              case 3:
+              default:
             }
+            // if (currentStepNum === 0) {
+            //   dispatch({ type: 'dataOperation_uploader/addNewTestInstance', payload: steps[currentStepNum]})
+            // }
             // console.log(steps[currentStepNum])
           } }>Next</Button>
         }

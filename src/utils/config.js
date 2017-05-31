@@ -20,7 +20,8 @@ module.exports = {
     users: '/users',
     dashboard: '/dashboard',
     dataOperation_uploader: {
-      addNewTestInstance: remoteURL + apiPrefix + '/dataOperation/tests'
+      addNewTestInstance: remoteURL + apiPrefix + '/dataOperation/tests',
+      getFormulationList: remoteURL + apiPrefix + '/dataOperation/formulations',
     }
   },
 }

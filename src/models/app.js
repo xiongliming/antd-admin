@@ -2,7 +2,7 @@ import { getUserInfo, logout } from '../services/app'
 import { routerRedux } from 'dva/router'
 import { parse } from 'qs'
 import { config } from '../utils'
-const { prefix } = config
+const { prefix } = config;
 
 export default {
   namespace: 'app',
@@ -19,7 +19,7 @@ export default {
   },
   subscriptions: {
     setup ({ dispatch }) {
-      dispatch({ type: 'queryUser' })
+      dispatch({ type: 'queryUser' });
       window.onresize = () => {
         dispatch({ type: 'changeNavbar' })
       }
@@ -29,18 +29,18 @@ export default {
     *queryUser ({
       payload,
     }, { call, put }) {
-      const data = yield call(getUserInfo, parse(payload))
+      const data = yield call(getUserInfo, parse(payload));
       if (data.success && data.user) {
         yield put({
           type: 'queryUserSuccess',
           payload: data.user,
-        })
+        });
         if (location.pathname === '/login') {
           yield put(routerRedux.push('/dashboard'))
         }
       } else {
         if (location.pathname !== '/login') {
-          let from = location.pathname
+          let from = location.pathname;
           if (location.pathname === '/dashboard') {
             from = '/dashboard'
           }
@@ -51,7 +51,7 @@ export default {
     *logout ({
       payload,
     }, { call, put }) {
-      const data = yield call(logout, parse(payload))
+      const data = yield call(logout, parse(payload));
       if (data.success) {
         yield put({ type: 'queryUser' })
       } else {
@@ -103,14 +103,14 @@ export default {
       }
     },
     handleSwitchSider (state) {
-      localStorage.setItem(`${prefix}siderFold`, !state.siderFold)
+      localStorage.setItem(`${prefix}siderFold`, !state.siderFold);
       return {
         ...state,
         siderFold: !state.siderFold,
       }
     },
     handleChangeTheme (state) {
-      localStorage.setItem(`${prefix}darkTheme`, !state.darkTheme)
+      localStorage.setItem(`${prefix}darkTheme`, !state.darkTheme);
       return {
         ...state,
         darkTheme: !state.darkTheme,
@@ -135,7 +135,7 @@ export default {
       }
     },
     handleNavOpenKeys (state, { payload: navOpenKeys }) {
-      console.log(navOpenKeys)
+      console.log(navOpenKeys);
       return {
         ...state,
         ...navOpenKeys,
