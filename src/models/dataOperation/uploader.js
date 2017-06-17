@@ -6,7 +6,13 @@ import { routerRedux } from 'dva/router'
 import { cloneDeep } from 'lodash'
 import { parse } from 'qs'
 import { apiPrefix, api } from '../../utils/config'
-import { addNewTestInstanceService, getFormulationListService } from '../../services/dataOperation'
+import {
+  createTestService,
+  getFormulationListService,
+  createFormulationService,
+  removeDataFileService,
+  removeAttachmentService
+} from '../../services/dataOperation'
 
 
 const uploader = {
@@ -16,31 +22,37 @@ const uploader = {
     steps: [{
       key: 'uploader_configure_formulation',
       title: 'Configure Formulation',
-      content: 'First-content',
       formulationList: [],
       selectedFormulationID: '0',
-      isCreateNewFormulation: false,
+      isCreateFormulation: false,
       newFormulation: {},
-      // { {key-1: key}, {value-1: value}, {key-2: key}, {value-2: value} }
+      // { {name: 'name'} {key-1: 'key1'}, {value-1: 'value1'}, {key-2: 'key2'}, {value-2: 'value2'} }
     }, {
+      selectedFormulationName: '',
       key: 'uploader_configure_test',
       title: 'Add New Test',
-      content: 'Second-content',
-      test_name: '',
+      name: '',
       thickness: 0,
+      measureType: 'temperature',
       temperatureMin: 0,
       temperatureMax: 0,
-      frequency: 0,
+      frequencyMin: 0,
+      frequencyMax: 0,
+      testType: 'structure',
+      testID: '0',
     }, {
       key: 'uploader_upload_data',
       title: 'Upload Data',
-      content: 'Last-content',
-      dataFile: '',
+      testID: '0',
+      testName: '',
+      fileList: [],
+      removeFileList: [],
     }, {
       key: 'uploader_upload_attachments',
       title: 'Upload Attachments',
-      content: 'Last-content',
-      attachments: []
+      testID: '0',
+      testName: '',
+      fileList: [],
     }],
   },
   subscriptions: {
@@ -53,13 +65,27 @@ const uploader = {
     },
   },
   effects: {
-    *addNewTestInstance ({ payload }, { put, call, select }) {
-      const data = yield call(addNewTestInstanceService, payload);
-      console.log(data)
-    },
     *getFormulationList ({ payload }, { put, call, select }) {
       const data = yield call(getFormulationListService);
       yield put({ type: 'updateFormulations', payload: data.formulations });
+    },
+    *createFormulation ({ payload }, { put, call, select }) {
+      const data = yield call(createFormulationService, payload);
+      yield put({ type: 'updateFormulationAfterCreated', payload: data });
+    },
+    *createTest ({ payload }, { put, call, select }) {
+      const data = yield call(createTestService, payload);
+      yield put({ type: 'updateTestAfterCreated', payload: data });
+    },
+    *removeDataFile ({ payload }, { put, call, select }) {
+      const data = yield call(removeDataFileService, payload);
+      console.log(data)
+      // yield put({ type: 'updateTestAfterCreated', payload: data });
+    },
+    *removeAttachment ({ payload }, { put, call, select }) {
+      const data = yield call(removeAttachmentService, payload);
+      console.log(data)
+      // yield put({ type: 'updateTestAfterCreated', payload: data });
     },
   },
   reducers: {
@@ -80,46 +106,85 @@ const uploader = {
       newState.steps[0].formulationList = payload;
       return newState
     },
+    updateFormulationAfterCreated(state, { payload }) {
+      let newState = cloneDeep(state);
+      newState.steps[0].selectedFormulationID = payload.new_formulation_id.toString();
+      newState.steps[1].selectedFormulationName = payload.new_formulation_name.toString();
+      return newState
+    },
+    updateTestAfterCreated(state, { payload }) {
+      let newState = cloneDeep(state);
+      newState.steps[1].testID = payload.test_id.toString();
+      newState.steps[2].testID = payload.test_id.toString();
+      newState.steps[2].testName = payload.test_name;
+      newState.steps[3].testID = payload.test_id.toString();
+      newState.steps[3].testName = payload.test_name;
+      return newState
+    },
     updateForm (state, { payload }) {
       let newState = cloneDeep(state);
       const currentStepNum = payload.currentStepNum;
       const changedField = payload.changedField;
+      if (changedField === undefined) return;
       switch (currentStepNum) {
         case 0:
+          // update selected formulation
           if (changedField.hasOwnProperty('formulationSelect')) {
             let selectedID = changedField.formulationSelect.value;
-            newState.steps[currentStepNum].selectedFormulationID = selectedID;
-            newState.steps[currentStepNum].isCreateNewFormulation = selectedID === '0';
+            newState.steps[0].selectedFormulationID = selectedID;
+            if ( selectedID !== '0' ) {
+              newState.steps[1].selectedFormulationName = newState.steps[0].formulationList.filter((f) => {
+                return f.id === Number(selectedID)
+              })[0].name;
+            }
+            newState.steps[0].isCreateFormulation = selectedID === '0';
+          // update properties for new formulation
           } else if(changedField.hasOwnProperty('properties')) {
-            for (let i in newState.steps[currentStepNum].newFormulation) {
+            for (let i in newState.steps[0].newFormulation) {
               let index = Number(i.split('-', 2)[1]);
               if ( !changedField.properties.value.includes(index) ) {
-                delete newState.steps[currentStepNum].newFormulation[`key-${index}`];
-                delete newState.steps[currentStepNum].newFormulation[`value-${index}`]
+                delete newState.steps[0].newFormulation[`key-${index}`];
+                delete newState.steps[0].newFormulation[`value-${index}`]
               }
             }
-            console.log("properties>>> ", newState.steps[currentStepNum].newFormulation);
+            console.log("properties>>> ", newState.steps[0].newFormulation);
+          // update the name of formulation
           } else {
             for (let i in changedField) {
-              newState.steps[currentStepNum].newFormulation[changedField[i].name] = changedField[i].value;
-              console.log("key_value>>> ", newState.steps[currentStepNum].newFormulation);
+              newState.steps[0].newFormulation[changedField[i].name] = changedField[i].value;
+              console.log("key_value>>> ", newState.steps[0].newFormulation);
               break;
             }
           }
+          break;
         case 1:
+          if (changedField.hasOwnProperty('name')) {
+            newState.steps[1].name = changedField.name.value;
+          } else if (changedField.hasOwnProperty('measureType')) {
+            newState.steps[1].measureType = changedField.measureType.value;
+          } else if (changedField.hasOwnProperty('thickness')) {
+            newState.steps[1].thickness = changedField.thickness.value;
+          } else if (changedField.hasOwnProperty('temperatureMin')) {
+            newState.steps[1].temperatureMin = changedField.temperatureMin.value;
+          } else if (changedField.hasOwnProperty('temperatureMax')) {
+            newState.steps[1].temperatureMax = changedField.temperatureMax.value;
+          } else if (changedField.hasOwnProperty('frequencyMin')) {
+            newState.steps[1].frequencyMin = changedField.frequencyMin.value;
+          } else if (changedField.hasOwnProperty('frequencyMax')) {
+            newState.steps[1].frequencyMax = changedField.frequencyMax.value;
+          } else if (changedField.hasOwnProperty('testType')) {
+            newState.steps[1].testType = changedField.testType.value;
+          }
+          break;
         case 2:
+          newState.steps[2].fileList = changedField.uploadData.value;
+          break;
         case 3:
+          newState.steps[3].fileList = changedField.uploadAttachment.value;
+          break;
         default:
 
       }
-      // newState.steps[currentStepNum].formElements = newState.steps[currentStepNum].formElements.map((item) => {
-      //   const fieldKey = Object.keys(changedField)[0];
-      //   if (item.key === fieldKey) {
-      //     return {...item, value: changedField[fieldKey].value}
-      //   } else {
-      //     return item
-      //   }
-      // });
       return newState
     },
   },

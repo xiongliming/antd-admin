@@ -31,10 +31,12 @@ const userPermission = {
     'dashboard', 'chart',
   ],
   ADMIN: [
-    'dashboard', 'dataOperation', 'dataOperation/uploader', 'dataOperation/testDataTable', 'dataAnalysis', 'users', 'request',
-    'UIElement', 'UIElement/iconfont', 'UIElement/dataTable', 'UIElement/dropOption', 'UIElement/search', 'UIElement/editor', 'UIElement/layer',
-    'chart', 'chart/lineChart', 'chart/barChart', 'chart/areaChart',
-    'navigation', 'navigation/navigation1', 'navigation/navigation2', 'navigation/navigation2/navigation21', 'navigation/navigation2/navigation22'],
+    'dashboard', 'dataOperation', 'dataOperation/uploader', 'dataOperation/testDataTable', 'dataAnalysis', 'users',
+    // 'request',
+    // 'UIElement', 'UIElement/iconfont', 'UIElement/dataTable', 'UIElement/dropOption', 'UIElement/search', 'UIElement/editor', 'UIElement/layer',
+    // 'chart', 'chart/lineChart', 'chart/barChart', 'chart/areaChart',
+    // 'navigation', 'navigation/navigation1', 'navigation/navigation2', 'navigation/navigation2/navigation21', 'navigation/navigation2/navigation22'
+  ],
   DEVELOPER: [
     'dashboard', 'users', 'UIElement', 'UIElement/iconfont', 'chart'
   ],

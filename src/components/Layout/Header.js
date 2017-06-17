@@ -38,7 +38,7 @@ function Header ({ user, logout, switchSider, siderFold, isNavbar, menuPopoverVi
             {user.username} </span>}
           >
             <Menu.Item key="logout">
-              <a>注销</a>
+              <a>Logout</a>
             </Menu.Item>
           </SubMenu>
         </Menu>

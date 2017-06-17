@@ -55,7 +55,7 @@ const Login = ({
         <Row>
           { loginError === '' ? '' : <Alert message={loginError} type="error" closable showIcon />  }
           <Button type="primary" size="large" onClick={handleOk} loading={loginLoading}>
-            登录
+            Login
           </Button>
         </Row>
       </form>
