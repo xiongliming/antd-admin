@@ -18,7 +18,9 @@ module.exports = {
     userLogout: '/user/logout',
     userInfo: '/userInfo',
     users: '/users',
-    dashboard: '/dashboard',
+    dashboard: {
+      getDashboardDataUrl: remoteURL + apiPrefix + '/dashboard'
+    },
     dataOperation_uploader: {
       uploadTestAttachmentUrl: remoteURL + apiPrefix + '/dataOperation/tests/attachments',  // POST, xhr
       removeTestAttachmentUrl: remoteURL + apiPrefix + '/dataOperation/tests/attachments',  // DELETE, xhr

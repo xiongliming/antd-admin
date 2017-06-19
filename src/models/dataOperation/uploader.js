@@ -1,11 +1,7 @@
 /**
  * Created by zealot on 17/4/20.
  */
-import { upload } from '../../services/dataOperation'
-import { routerRedux } from 'dva/router'
 import { cloneDeep } from 'lodash'
-import { parse } from 'qs'
-import { apiPrefix, api } from '../../utils/config'
 import {
   createTestService,
   getFormulationListService,
@@ -13,7 +9,7 @@ import {
   removeDataFileService,
   removeAttachmentService
 } from '../../services/dataOperation'
-
+const moment = require('moment');
 
 const uploader = {
   namespace: 'dataOperation_uploader',
@@ -25,7 +21,9 @@ const uploader = {
       formulationList: [],
       selectedFormulationID: '0',
       isCreateFormulation: false,
-      newFormulation: {},
+      newFormulation: {
+        formulationDate: moment().unix(),
+      },
       // { {name: 'name'} {key-1: 'key1'}, {value-1: 'value1'}, {key-2: 'key2'}, {value-2: 'value2'} }
     }, {
       selectedFormulationName: '',
@@ -40,6 +38,7 @@ const uploader = {
       frequencyMax: 0,
       testType: 'structure',
       testID: '0',
+      date: moment().unix(),
     }, {
       key: 'uploader_upload_data',
       title: 'Upload Data',
@@ -47,12 +46,14 @@ const uploader = {
       testName: '',
       fileList: [],
       removeFileList: [],
+      dataDate: '',
     }, {
       key: 'uploader_upload_attachments',
       title: 'Upload Attachments',
       testID: '0',
       testName: '',
       fileList: [],
+      attachmentDate: '',
     }],
   },
   subscriptions: {
@@ -138,7 +139,7 @@ const uploader = {
               })[0].name;
             }
             newState.steps[0].isCreateFormulation = selectedID === '0';
-          // update properties for new formulation
+          // update formulation properties, delete items has already removed by user
           } else if(changedField.hasOwnProperty('properties')) {
             for (let i in newState.steps[0].newFormulation) {
               let index = Number(i.split('-', 2)[1]);
@@ -148,7 +149,18 @@ const uploader = {
               }
             }
             console.log("properties>>> ", newState.steps[0].newFormulation);
-          // update the name of formulation
+          // update formulation name
+          } else if(changedField.hasOwnProperty('formulationName')) {
+            for (let i in changedField) {
+              newState.steps[0].newFormulation[changedField[i].name] = changedField[i].value;
+              break;
+            }
+          // update formulation date
+          } else if(changedField.hasOwnProperty('formulationDate')) {
+            for (let i in changedField) {
+              newState.steps[0].newFormulation[changedField[i].name] = moment(changedField[i].value).unix();
+              break;
+            }
           } else {
             for (let i in changedField) {
               newState.steps[0].newFormulation[changedField[i].name] = changedField[i].value;
@@ -160,6 +172,8 @@ const uploader = {
         case 1:
           if (changedField.hasOwnProperty('name')) {
             newState.steps[1].name = changedField.name.value;
+          } else if (changedField.hasOwnProperty('date')) {
+            newState.steps[1].date = moment(changedField.date.value).unix();
           } else if (changedField.hasOwnProperty('measureType')) {
             newState.steps[1].measureType = changedField.measureType.value;
           } else if (changedField.hasOwnProperty('thickness')) {

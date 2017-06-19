@@ -1,25 +1,10 @@
 import { request, config } from '../utils'
-const { api } = config
-const { dashboard } = api
+const { api } = config;
 
-export async function myCity (params) {
-  return request({
-    url: 'http://www.zuimeitianqi.com/zuimei/myCity',
-    data: params,
-  })
-}
 
-export async function queryWeather (params) {
+export async function getDashboardDataService () {
   return request({
-    url: 'http://www.zuimeitianqi.com/zuimei/queryWeather',
-    data: params,
-  })
-}
-
-export async function query (params) {
-  return request({
-    url: dashboard,
+    url: api.dashboard.getDashboardDataUrl,
     method: 'get',
-    data: params,
   })
 }

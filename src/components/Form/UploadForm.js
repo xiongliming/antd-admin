@@ -2,14 +2,17 @@
  * Created by zealot on 17/4/24.
  */
 import React, { PropTypes } from 'react'
-import { Row, Col, Form, Input, InputNumber, Upload, message, Button, Icon, Collapse, Select, Radio } from 'antd'
+import { Row, Col, Form, Input, InputNumber, Upload, DatePicker, Button, Icon, Collapse, Select, Radio } from 'antd'
 import { api } from '../../utils/config'
+
 const FormItem = Form.Item;
 const Panel = Collapse.Panel;
 const Dragger = Upload.Dragger;
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const { Option, OptGroup } = Select;
+const moment = require('moment');
+
 import styles from './UploadForm.less'
 
 // import { cloneDeep } from 'lodash'
@@ -57,26 +60,6 @@ const customPanelStyle = {
   border: 0,
 };
 
-
-const formulationSelect = (formulationList) => {
-  const fl = formulationList.map((formulation) => {
-    return <Option key={formulation.id.toString()} value={formulation.id.toString()}>{formulation.name}</Option>
-  });
-  return (
-    <Select
-      showSearch
-      placeholder="Select a Formulation"
-      optionFilterProp="children"
-    >
-      {formulationList.map((formulation) => {
-        return <Option key={formulation.id.toString()} value={formulation.id.toString()}>{formulation.name}</Option>
-      })}
-      <Option key="-1" value="-1" disabled>-----</Option>
-      <Option key="0" value="0"><i>Create a New Formulation...</i></Option>
-    </Select>
-  )
-};
-
 let uuid = 0;
 
 const UploadForm = Form.create({
@@ -95,6 +78,26 @@ const UploadForm = Form.create({
   const { getFieldDecorator, getFieldValue, setFieldsValue, validateFields } = form;
 
   // step1: uploader_configure_formulation
+
+  const formulationSelect = (formulationList) => {
+    const fl = formulationList.map((formulation) => {
+      return <Option key={formulation.id.toString()} value={formulation.id.toString()}>{formulation.name}</Option>
+    });
+    return (
+      <Select
+        showSearch
+        placeholder="Select a Formulation"
+        optionFilterProp="children"
+      >
+        {formulationList.map((formulation) => {
+          return <Option key={formulation.id.toString()} value={formulation.id.toString()}>{formulation.name}</Option>
+        })}
+        <Option key="-1" value="-1" disabled>-----</Option>
+        <Option key="0" value="0"><i>Create a New Formulation...</i></Option>
+      </Select>
+    )
+  };
+
   const remove = (k) => {
     // can use data-binding to get
     const properties = getFieldValue('properties');
@@ -197,6 +200,18 @@ const UploadForm = Form.create({
               message: "Please input the name of the test. ",
             }],
           })( <Input placeholder="Test Name" size={'large'} /> )
+        }
+      </FormItem>
+      <FormItem {...formItemLayout} label='Test Name'>
+        {
+          getFieldDecorator('date', {
+            initialValue: moment().utc(),
+            validateTrigger: ['onChange', ],
+            rules: [{
+              required: true,
+              message: "Please select the creating date for the new test. ",
+            }],
+          })( <DatePicker size={'large'} /> )
         }
       </FormItem>
       <FormItem {...formItemLayout} label='Test Thickness'>
@@ -333,7 +348,7 @@ const UploadForm = Form.create({
   };
   // step4: uploader_upload_attachments
   const attachmentUploaderProps = {
-    name: 'datafile',
+    name: 'attachments',
     accept: '.txt,.doc',
     action: api.dataOperation_uploader.uploadTestAttachmentUrl,
     data: { testID: step.testID },
@@ -487,6 +502,7 @@ const UploadForm = Form.create({
           >
             {
               getFieldDecorator('formulationSelect', {
+                initialValue: step.selectedFormulationID==='0' ? undefined : step.selectedFormulationID,
                 rules: [{
                   required: true,
                   message: 'Please select a formulation OR Create a new formulation. ',
@@ -500,7 +516,7 @@ const UploadForm = Form.create({
               label='Formulation Name'
             >
               {
-                getFieldDecorator('name', {
+                getFieldDecorator('formulationName', {
                   validateTrigger: ['onChange', ],
                   rules: [{
                     required: true,
@@ -508,6 +524,21 @@ const UploadForm = Form.create({
                     message: 'Please input the name of the formulation. ',
                   }],
                 })( <Input placeholder="Formulation Name" size={'large'} /> )
+              }
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label='Formulation Create Date'
+            >
+              {
+                getFieldDecorator('formulationDate', {
+                  initialValue: moment().utc(),
+                  validateTrigger: ['onChange', ],
+                  rules: [{
+                    required: true,
+                    message: 'Please select the creating date for the new formulation. ',
+                  }],
+                })( <DatePicker size={'large'} /> )
               }
             </FormItem>
             { createFormulationFormItems }

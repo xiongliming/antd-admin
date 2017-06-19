@@ -13,7 +13,7 @@ function NumberCard ({ icon, color, title, number, countUp }) {
           <CountUp
             start={0}
             end={number}
-            duration={2.75}
+            duration={2}
             useEasing
             useGrouping
             separator=","

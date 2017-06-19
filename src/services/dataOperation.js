@@ -3,9 +3,6 @@
  */
 import { request, config } from '../utils'
 const { api } = config;
-import axios from 'axios'
-
-
 
 
 export async function createTestService (data) {
