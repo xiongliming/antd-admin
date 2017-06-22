@@ -1,16 +1,16 @@
 /**
  * Created by zealot on 17/4/24.
  */
-import React, { PropTypes } from 'react'
-import { Row, Col, Form, Input, InputNumber, Upload, DatePicker, Button, Icon, Collapse, Select, Radio } from 'antd'
-import { api } from '../../utils/config'
+import React, {PropTypes} from 'react'
+import {Row, Col, Form, Input, InputNumber, Upload, DatePicker, Button, Icon, Collapse, Select, Radio} from 'antd'
+import {api} from '../../utils/config'
 
 const FormItem = Form.Item;
 const Panel = Collapse.Panel;
 const Dragger = Upload.Dragger;
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
-const { Option, OptGroup } = Select;
+const {Option, OptGroup} = Select;
 const moment = require('moment');
 
 import styles from './UploadForm.less'
@@ -19,12 +19,12 @@ import styles from './UploadForm.less'
 
 const formItemLayout = {
   labelCol: {
-    xs: { span: 24 },
-    sm: { span: 6, offset: 4 },
+    xs: {span: 24},
+    sm: {span: 6, offset: 4},
   },
   wrapperCol: {
-    xs: { span: 24 },
-    sm: { span: 6, offset: 0 },
+    xs: {span: 24},
+    sm: {span: 6, offset: 0},
   },
 };
 
@@ -48,8 +48,8 @@ const colPropertyDelButtonItemLayout = {
 
 const dynamicFormItemLayoutWithOutLabel = {
   wrapperCol: {
-    xs: { span: 24, offset: 0 },
-    sm: { span: 6, offset: 10 },
+    xs: {span: 24, offset: 0},
+    sm: {span: 6, offset: 10},
   },
 };
 
@@ -74,8 +74,8 @@ const UploadForm = Form.create({
   // onValuesChange(props, values) {
   //   console.log("onValuesChange>>> ", props, values);
   // },
-})( ({ form, step, dispatch }) => {
-  const { getFieldDecorator, getFieldValue, setFieldsValue, validateFields } = form;
+})(({form, step, dispatch}) => {
+  const {getFieldDecorator, getFieldValue, setFieldsValue, validateFields} = form;
 
   // step1: uploader_configure_formulation
 
@@ -124,54 +124,54 @@ const UploadForm = Form.create({
     });
   };
 
-  getFieldDecorator('properties', { initialValue: [] });
+  getFieldDecorator('properties', {initialValue: []});
   const properties = getFieldValue('properties');
   const createFormulationFormItems = properties.map((k, index) => {
     return (
-        <Row type={'flex'} key={`Row-${k}`} {...rowPropertyItemLayout}>
-          <Col {...colPropertyNameItemLayout}>
-            <FormItem
-              required={false}
-              key={`keyItem-${k}`}
-            >
-              {
-                getFieldDecorator(`key-${k}`, {
-                  validateTrigger: ['onChange', ],
-                  rules: [{
-                    required: true,
-                    whitespace: true,
-                    message: "Please input formulation property name or delete this field. ",
-                  }],
-                })( <Input placeholder="Property Name" size={'large'} /> )
-              }
-            </FormItem>
-          </Col>
-          <Col {...colPropertyValueItemLayout}>
-            <FormItem
-              required={false}
-              key={`valueItem-${k}`}
-            >
-              {
-                getFieldDecorator(`value-${k}`, {
-                  validateTrigger: ['onChange', ],
-                  rules: [{
-                    required: true,
-                    whitespace: true,
-                    message: "Please input formulation property value or delete this field. ",
-                  }],
-                })( <Input placeholder="Property Value" size={'large'}/> )
-              }
-            </FormItem>
-          </Col>
-          <Col {...colPropertyDelButtonItemLayout}>
-            <Icon
-              className={styles.dynamicDeleteButton}
-              type="minus-circle-o"
-              disabled={properties.length === 1}
-              onClick={() => remove(k)}
-            />
-          </Col>
-        </Row>
+      <Row type={'flex'} key={`Row-${k}`} {...rowPropertyItemLayout}>
+        <Col {...colPropertyNameItemLayout}>
+          <FormItem
+            required={false}
+            key={`keyItem-${k}`}
+          >
+            {
+              getFieldDecorator(`key-${k}`, {
+                validateTrigger: ['onChange',],
+                rules: [{
+                  required: true,
+                  whitespace: true,
+                  message: "Please input formulation property name or delete this field. ",
+                }],
+              })(<Input placeholder="Property Name" size={'large'}/>)
+            }
+          </FormItem>
+        </Col>
+        <Col {...colPropertyValueItemLayout}>
+          <FormItem
+            required={false}
+            key={`valueItem-${k}`}
+          >
+            {
+              getFieldDecorator(`value-${k}`, {
+                validateTrigger: ['onChange',],
+                rules: [{
+                  required: true,
+                  whitespace: true,
+                  message: "Please input formulation property value or delete this field. ",
+                }],
+              })(<Input placeholder="Property Value" size={'large'}/>)
+            }
+          </FormItem>
+        </Col>
+        <Col {...colPropertyDelButtonItemLayout}>
+          <Icon
+            className={styles.dynamicDeleteButton}
+            type="minus-circle-o"
+            disabled={properties.length === 1}
+            onClick={() => remove(k)}
+          />
+        </Col>
+      </Row>
     );
   });
 
@@ -182,55 +182,55 @@ const UploadForm = Form.create({
         {
           getFieldDecorator('formulation_of_test', {
             initialValue: step.selectedFormulationName,
-            validateTrigger: ['onChange', ],
+            validateTrigger: ['onChange',],
             rules: [{
               required: true,
               message: "The formulation you selected in first step. ",
             }],
-          })( <Input size={'large'} disabled/> )
+          })(<Input size={'large'} disabled/>)
         }
       </FormItem>
       <FormItem {...formItemLayout} label='Test Name'>
         {
           getFieldDecorator('name', {
             initialValue: '',
-            validateTrigger: ['onChange', ],
+            validateTrigger: ['onChange',],
             rules: [{
               required: true,
               message: "Please input the name of the test. ",
             }],
-          })( <Input placeholder="Test Name" size={'large'} /> )
+          })(<Input placeholder="Test Name" size={'large'}/>)
         }
       </FormItem>
       <FormItem {...formItemLayout} label='Test Name'>
         {
           getFieldDecorator('date', {
             initialValue: moment().utc(),
-            validateTrigger: ['onChange', ],
+            validateTrigger: ['onChange',],
             rules: [{
               required: true,
               message: "Please select the creating date for the new test. ",
             }],
-          })( <DatePicker size={'large'} /> )
+          })(<DatePicker size={'large'}/>)
         }
       </FormItem>
       <FormItem {...formItemLayout} label='Test Thickness'>
         {
           getFieldDecorator('thickness', {
             initialValue: 0,
-            validateTrigger: ['onChange', ],
+            validateTrigger: ['onChange',],
             rules: [{
               required: true,
               message: "Please input the thickness of the test. ",
             }],
-          })( <InputNumber size={'large'}/> )
+          })(<InputNumber size={'large'}/>)
         }<span className="ant-form-text"> ㎜</span>
       </FormItem>
       <FormItem {...formItemLayout} label='Measured Variable'>
         {
           getFieldDecorator('measureType', {
             initialValue: 'temperature',
-            validateTrigger: ['onChange', ],
+            validateTrigger: ['onChange',],
             rules: [{
               required: true,
               message: "Please input the name of the test. ",
@@ -243,83 +243,89 @@ const UploadForm = Form.create({
           )
         }
       </FormItem>
-      <FormItem {...formItemLayout} label='Temperature' style={ step.measureType==='temperature' ? {display: "none"}  : {display: "block"} }>
+      <FormItem {...formItemLayout} label='Temperature'
+                style={ step.measureType === 'temperature' ? {display: "none"} : {display: "block"} }>
         {
           getFieldDecorator('temperatureMin', {
             initialValue: 0,
-            validateTrigger: ['onChange', ],
+            validateTrigger: ['onChange',],
             rules: [{
               required: true,
               message: "Please input the temperature of the test. ",
             }],
-          })( <InputNumber size={'large'}/> )
+          })(<InputNumber size={'large'}/>)
         }<span className="ant-form-text"> ℃</span>
       </FormItem>
-      <FormItem {...formItemLayout} label='Minimum Temperature' style={ step.measureType==='temperature' ? {display: "block"}  : {display: "none"} }>
+      <FormItem {...formItemLayout} label='Minimum Temperature'
+                style={ step.measureType === 'temperature' ? {display: "block"} : {display: "none"} }>
         {
           getFieldDecorator('temperatureMin', {
             initialValue: 0,
-            validateTrigger: ['onChange', ],
+            validateTrigger: ['onChange',],
             rules: [{
               required: true,
               message: "Please input the minimum temperature of the test. ",
             }],
-          })( <InputNumber size={'large'}/> )
+          })(<InputNumber size={'large'}/>)
         }<span className="ant-form-text"> ℃</span>
       </FormItem>
-      <FormItem {...formItemLayout} label='Maximum Temperature' style={ step.measureType==='temperature' ? {display: "block"}  : {display: "none"} }>
+      <FormItem {...formItemLayout} label='Maximum Temperature'
+                style={ step.measureType === 'temperature' ? {display: "block"} : {display: "none"} }>
         {
           getFieldDecorator('temperatureMax', {
             initialValue: 0,
-            validateTrigger: ['onChange', ],
+            validateTrigger: ['onChange',],
             rules: [{
               required: true,
               message: "Please input the maximum temperature of the test. ",
             }],
-          })( <InputNumber size={'large'}/> )
+          })(<InputNumber size={'large'}/>)
         }<span className="ant-form-text"> ℃</span>
       </FormItem>
-      <FormItem {...formItemLayout} label='Frequency' style={ step.measureType==='frequency' ? {display: "none"}  : {display: "block"} }>
+      <FormItem {...formItemLayout} label='Frequency'
+                style={ step.measureType === 'frequency' ? {display: "none"} : {display: "block"} }>
         {
           getFieldDecorator('frequencyMin', {
             initialValue: 0,
-            validateTrigger: ['onChange', ],
+            validateTrigger: ['onChange',],
             rules: [{
               required: true,
               message: "Please input the frequency of the test. ",
             }],
-          })( <InputNumber size={'large'}/> )
+          })(<InputNumber size={'large'}/>)
         }<span className="ant-form-text"> ㎐</span>
       </FormItem>
-      <FormItem {...formItemLayout} label='Minimum Frequency' style={ step.measureType==='frequency' ? {display: "block"}  : {display: "none"} }>
+      <FormItem {...formItemLayout} label='Minimum Frequency'
+                style={ step.measureType === 'frequency' ? {display: "block"} : {display: "none"} }>
         {
           getFieldDecorator('frequencyMin', {
             initialValue: 0,
-            validateTrigger: ['onChange', ],
+            validateTrigger: ['onChange',],
             rules: [{
               required: true,
               message: "Please input the minimum frequency of the test. ",
             }],
-          })( <InputNumber size={'large'}/> )
+          })(<InputNumber size={'large'}/>)
         }<span className="ant-form-text"> ㎐</span>
       </FormItem>
-      <FormItem {...formItemLayout} label='Maximum Frequency' style={ step.measureType==='frequency' ? {display: "block"}  : {display: "none"} }>
+      <FormItem {...formItemLayout} label='Maximum Frequency'
+                style={ step.measureType === 'frequency' ? {display: "block"} : {display: "none"} }>
         {
           getFieldDecorator('frequencyMax', {
             initialValue: 0,
-            validateTrigger: ['onChange', ],
+            validateTrigger: ['onChange',],
             rules: [{
               required: true,
               message: "Please input the Maximum frequency of the test. ",
             }],
-          })( <InputNumber size={'large'}/> )
+          })(<InputNumber size={'large'}/>)
         }<span className="ant-form-text"> ㎐</span>
       </FormItem>
       <FormItem {...formItemLayout} label='Test Type'>
         {
           getFieldDecorator('testType', {
             initialValue: 'structure',
-            validateTrigger: ['onChange', ],
+            validateTrigger: ['onChange',],
             rules: [{
               required: true,
               message: "Please select the type of the test. ",
@@ -339,8 +345,7 @@ const UploadForm = Form.create({
   const dataUploaderProps = {
     name: 'datafile',
     accept: '.txt',
-    action: api.dataOperation_uploader.uploadTestDataUrl,
-    data: { testID: step.testID },
+    action: api.dataOperation_uploader.uploadTestDataUrl(step.testID),
     showUploadList: true,
     headers: {
       'Access-Control-Allow-Origin': '*',
@@ -350,8 +355,7 @@ const UploadForm = Form.create({
   const attachmentUploaderProps = {
     name: 'attachments',
     accept: '.txt,.doc',
-    action: api.dataOperation_uploader.uploadTestAttachmentUrl,
-    data: { testID: step.testID },
+    action: api.dataOperation_uploader.uploadTestAttachmentUrl(step.testID),
     showUploadList: true,
     multiple: true,
     headers: {
@@ -365,12 +369,12 @@ const UploadForm = Form.create({
         {
           getFieldDecorator('testName', {
             initialValue: step.testName,
-            validateTrigger: ['onChange', ],
+            validateTrigger: ['onChange',],
             rules: [{
               required: true,
               message: "The test you created in second step. ",
             }],
-          })( <Input size={'large'} disabled/> )
+          })(<Input size={'large'} disabled/>)
         }
       </FormItem>
       <FormItem {...formItemLayout} label='Upload Data'>
@@ -387,26 +391,26 @@ const UploadForm = Form.create({
                   return e.slice(-1);
                 }
 
-                let { file, fileList } = e;
+                let {file, fileList} = e;
                 let resultList = fileList;
                 if (fileList.length > 1) {
                   removeList = fileList.slice(0, -1);
                   resultList = fileList.slice(-1);
                 }
+                // replace
                 if (removeList.length > 0) {
-                  console.log('replace>>> ', removeList);
                   for (let r of removeList) {
                     dispatch({
                       type: 'dataOperation_uploader/removeDataFile',
-                      payload: { removedFile: r.name, testID: step.testID }
+                      payload: {removedFile: r.name, id: step.testID}
                     })
                   }
                 }
+                // remove
                 if (file.status === 'removed') {
-                  console.log('remove>>> ', file.name);
                   dispatch({
                     type: 'dataOperation_uploader/removeDataFile',
-                    payload: { removedFile: file.name, testID: step.testID }
+                    payload: {removedFile: file.name, id: step.testID}
                   })
                 }
 
@@ -419,10 +423,11 @@ const UploadForm = Form.create({
             })(
               <Dragger {...dataUploaderProps}>
                 <p className="ant-upload-drag-icon">
-                  <Icon type="inbox" />
+                  <Icon type="inbox"/>
                 </p>
                 <p className="ant-upload-text">Click or drag file to this area to upload</p>
-                <p className="ant-upload-hint">Support for a single file upload. <br/>Please upload the data file for this test.</p>
+                <p className="ant-upload-hint">Support for a single file upload. <br/>Please upload the data file for
+                  this test.</p>
               </Dragger>
             )
           }
@@ -437,12 +442,12 @@ const UploadForm = Form.create({
         {
           getFieldDecorator('testName', {
             initialValue: step.testName,
-            validateTrigger: ['onChange', ],
+            validateTrigger: ['onChange',],
             rules: [{
               required: true,
               message: "The test you created in second step. ",
             }],
-          })( <Input size={'large'} disabled/> )
+          })(<Input size={'large'} disabled/>)
         }
       </FormItem>
       <FormItem {...formItemLayout} label='Upload Attachments'>
@@ -457,13 +462,12 @@ const UploadForm = Form.create({
                 if (Array.isArray(e)) {
                   return e;
                 }
-
-                let { file, fileList } = e;
-                if ( file.status === 'removed' ) {
-                  console.log('remove>>> ', file);
+                // remove
+                let {file, fileList} = e;
+                if (file.status === 'removed') {
                   dispatch({
                     type: 'dataOperation_uploader/removeAttachment',
-                    payload: { removedFile: file.name, testID: step.testID }
+                    payload: {removedFile: file.name, id: step.testID}
                   })
                 }
                 return e && fileList
@@ -475,10 +479,11 @@ const UploadForm = Form.create({
             })(
               <Dragger {...attachmentUploaderProps}>
                 <p className="ant-upload-drag-icon">
-                  <Icon type="inbox" />
+                  <Icon type="inbox"/>
                 </p>
                 <p className="ant-upload-text">Click or drag file to this area to upload</p>
-                <p className="ant-upload-hint">Support for a single file upload. <br/>Please upload attachment files for this test.</p>
+                <p className="ant-upload-hint">Support for a single file upload. <br/>Please upload attachment files for
+                  this test.</p>
               </Dragger>
             )
           }
@@ -489,7 +494,7 @@ const UploadForm = Form.create({
 
   switch (step.key) {
     case 'uploader_configure_formulation':
-      const { formulationList, selectedFormulationID } = step;
+      const {formulationList, selectedFormulationID} = step;
       const selectedFormulation = formulationList.filter((formulation) => {
         return formulation.id.toString() === selectedFormulationID.toString()
       });
@@ -502,28 +507,28 @@ const UploadForm = Form.create({
           >
             {
               getFieldDecorator('formulationSelect', {
-                initialValue: step.selectedFormulationID==='0' ? undefined : step.selectedFormulationID,
+                initialValue: step.selectedFormulationID === '0' ? undefined : step.selectedFormulationID,
                 rules: [{
                   required: true,
                   message: 'Please select a formulation OR Create a new formulation. ',
                 }],
-              })( formulationSelect(formulationList) )
+              })(formulationSelect(formulationList))
             }
           </FormItem>
-          <div style={ step.isCreateFormulation ? { display: 'block' } : { display: 'none' } }>
+          <div style={ step.isCreateFormulation ? {display: 'block'} : {display: 'none'} }>
             <FormItem
               {...formItemLayout}
               label='Formulation Name'
             >
               {
                 getFieldDecorator('formulationName', {
-                  validateTrigger: ['onChange', ],
+                  validateTrigger: ['onChange',],
                   rules: [{
                     required: true,
                     whitespace: true,
                     message: 'Please input the name of the formulation. ',
                   }],
-                })( <Input placeholder="Formulation Name" size={'large'} /> )
+                })(<Input placeholder="Formulation Name" size={'large'}/>)
               }
             </FormItem>
             <FormItem
@@ -533,23 +538,23 @@ const UploadForm = Form.create({
               {
                 getFieldDecorator('formulationDate', {
                   initialValue: moment().utc(),
-                  validateTrigger: ['onChange', ],
+                  validateTrigger: ['onChange',],
                   rules: [{
                     required: true,
                     message: 'Please select the creating date for the new formulation. ',
                   }],
-                })( <DatePicker size={'large'} /> )
+                })(<DatePicker size={'large'}/>)
               }
             </FormItem>
             { createFormulationFormItems }
             <FormItem {...dynamicFormItemLayoutWithOutLabel}>
-              <Button type="dashed" onClick={add} style={{ width: '100%' }}>
-                <Icon type="plus" /> Add field
+              <Button type="dashed" onClick={add} style={{width: '100%'}}>
+                <Icon type="plus"/> Add field
               </Button>
             </FormItem>
           </div>
           {
-            selectedFormulation.length!==0 && selectedFormulation[0].hasOwnProperty('formulation_properties') ?
+            selectedFormulation.length !== 0 && selectedFormulation[0].hasOwnProperty('formulation_properties') ?
               selectedFormulation[0].formulation_properties.map((fp, index) => {
                 for (let key in fp) {
                   return (
@@ -560,13 +565,13 @@ const UploadForm = Form.create({
                     >
                       {
                         getFieldDecorator(`formulation_properties-${index}`, {
-                        initialValue: fp[key],
-                        validateTrigger: ['onChange', ],
-                        rules: [{
-                          required: true,
-                          whitespace: true,
-                        }],
-                      })(<Input disabled/>)}
+                          initialValue: fp[key],
+                          validateTrigger: ['onChange',],
+                          rules: [{
+                            required: true,
+                            whitespace: true,
+                          }],
+                        })(<Input disabled/>)}
                     </FormItem>
                   )
                 }

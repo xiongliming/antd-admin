@@ -59,9 +59,15 @@ const App = ({ children, location, dispatch, app }) => {
         {config.iconFontUrl ? <script src={config.iconFontUrl}></script> : ''}
       </Helmet>
       <div className={classnames(styles.layout, { [styles.fold]: isNavbar ? false : siderFold }, { [styles.withnavbar]: isNavbar })}>
-        {!isNavbar ? <aside className={classnames(styles.sider, { [styles.light]: !darkTheme })}>
-          <Sider {...siderProps} />
-        </aside> : ''}
+        {
+          !isNavbar
+            ?
+            <aside className={classnames(styles.sider, { [styles.light]: !darkTheme })}>
+              <Sider {...siderProps} />
+            </aside>
+            :
+            ''
+        }
         <div className={styles.main}>
           <Header {...headerProps} />
           <Bread location={location} />

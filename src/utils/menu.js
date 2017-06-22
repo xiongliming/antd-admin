@@ -16,7 +16,7 @@ module.exports = [
         icon: 'file-add',
       },
       {
-        key: 'testDataTable',
+        key: 'viewer',
         name: 'View Test Data',
         icon: 'file-text',
       },

@@ -22,13 +22,20 @@ module.exports = {
       getDashboardDataUrl: remoteURL + apiPrefix + '/dashboard'
     },
     dataOperation_uploader: {
-      uploadTestAttachmentUrl: remoteURL + apiPrefix + '/dataOperation/tests/attachments',  // POST, xhr
-      removeTestAttachmentUrl: remoteURL + apiPrefix + '/dataOperation/tests/attachments',  // DELETE, xhr
-      uploadTestDataUrl: remoteURL + apiPrefix + '/dataOperation/tests/data',               // POST, xhr
-      removeTestDataUrl: remoteURL + apiPrefix + '/dataOperation/tests/data',               // DELETE, json
-      createTestUrl: remoteURL + apiPrefix + '/dataOperation/tests',                        // POST, json
-      getFormulationListUrl: remoteURL + apiPrefix + '/dataOperation/formulations',         // GET
-      createFormulationUrl: remoteURL + apiPrefix + '/dataOperation/formulations',          // POST, json
+
+      getFormulationListUrl: remoteURL + apiPrefix + '/dataOperation/formulations',                   // GET
+      createFormulationUrl: remoteURL + apiPrefix + '/dataOperation/formulations',                    // POST, json
+
+      getTestListUrl: remoteURL + apiPrefix + '/dataOperation/tests',                                 // GET, json
+      createTestUrl: remoteURL + apiPrefix + '/dataOperation/tests',                                  // POST, json
+
+      uploadTestDataUrl: (id) => remoteURL + apiPrefix + `/dataOperation/tests/${id}/data`,           // POST, xhr
+      removeTestDataUrl: (id) => remoteURL + apiPrefix + `/dataOperation/tests/${id}/data`,           // DELETE, json
+
+      uploadTestAttachmentUrl: (id) => remoteURL + apiPrefix + `/dataOperation/tests/${id}/attachments`,  // POST, xhr
+      removeTestAttachmentUrl: (id) => remoteURL + apiPrefix + `/dataOperation/tests/${id}/attachments`,  // DELETE, xhr
+
+      modifyFormulationUrl: (id) => remoteURL + apiPrefix + `/dataOperation/formulations/${id}`,          // PUT, json
     }
   },
 }

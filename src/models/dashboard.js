@@ -7,25 +7,25 @@ export default {
   namespace: 'dashboard',
   state: {
     formulationSummary: {
-      icon: 'pay-circle-o',
+      icon: 'book',
       color: color.green,
       title: 'Formulations',
       number: 0,
     },
     testSummary: {
-      icon: 'team',
+      icon: 'solution',
       color: color.blue,
       title: 'Tests',
       number: 0,
     },
     dataSummary: {
-      icon: 'message',
+      icon: 'dot-chart',
       color: color.purple,
       title: 'Data Points',
       number: 0,
     },
     attachmentSummary: {
-      icon: 'shopping-cart',
+      icon: 'copy',
       color: color.red,
       title: 'Attachments',
       number: 0,
