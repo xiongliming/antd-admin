@@ -6,6 +6,7 @@ import {
   modifyFormulationService,
   getFormulationListService,
   getTestListService,
+  getTestDataListService
 } from '../../services/dataOperation'
 const moment = require('moment');
 
@@ -15,6 +16,8 @@ const uploader = {
     selectedFormulationID: 0,
     selectedTestID: 0,
     formulationList: [],
+    isEPrimeLog: false,
+    g2plotType: 'line',
   },
   subscriptions: {
     setup({history, dispatch}) {
@@ -31,12 +34,23 @@ const uploader = {
       yield put({type: 'updateFormulationList', payload: data.formulations});
     },
     *getTestList ({payload}, {put, call, select}) {
-      const data = yield call(getTestListService, {formulationID: payload.selectedOptions[0].id});
+      const data = yield call(getTestListService, payload);
       yield put({
         type: 'updateFormulationTestList',
         payload: {
           testList: data.test_list,
-          formulationID: payload.selectedOptions[0].id
+          formulationID: data.formulation_id
+        }
+      });
+    },
+    *getTestDataList ({payload}, {put, call, select}) {
+      const data = yield call(getTestDataListService, payload);
+      yield put({
+        type: 'updateFormulationTestDataList',
+        payload: {
+          formulationID: data['test']['formulation_id'],
+          testID: data['test']['test_id'],
+          testData: data['test']['test_data'],
         }
       });
     },
@@ -62,31 +76,21 @@ const uploader = {
     },
     updateFormulation(state, {payload}) {
       let newState = cloneDeep(state);
-      let modifiedFormulation = newState.formulationList.filter((item) => {
-        return item.id === payload['formulation_id']
-      })[0];
+      let modifiedFormulation = newState.formulationList.filter((item) => item.id === payload['formulation_id'])[0];
       modifiedFormulation['formulation_properties'] = payload['formulation_properties'];
       return newState
-    },
-    updateSelectedFormulation(state, {payload}) {
-      return {
-        ...state,
-        selectedFormulationID: payload.selectedFormulationID
-      }
     },
     updateSelectedFormulationTest(state, {payload}) {
       return {
         ...state,
         selectedFormulationID: payload.selectedFormulationID,
-        selectedTestID: payload.selectedTestID
+        selectedTestID: payload.selectedTestID,
       }
     },
     updateFormulationTestList(state, {payload}) {
       let newState = cloneDeep(state);
       const {testList, formulationID} = payload;
-      let currentFormulation = newState.formulationList.filter((item) => {
-        return item.id === formulationID
-      })[0];
+      let currentFormulation = newState.formulationList.filter((item) => item.id === formulationID)[0];
       currentFormulation['children'] = [];
       testList.map((item) => {
         currentFormulation['children'].push({
@@ -105,11 +109,31 @@ const uploader = {
 
           value: item.id,
           label: item.name,
-          isLeaf: true
+          isLeaf: true,
         })
       });
       return newState
     },
+    updateFormulationTestDataList(state, {payload}) {
+      let newState = cloneDeep(state);
+      const {formulationID, testID, testData} = payload;
+      let currentFormulation = newState.formulationList.filter((item) => item.id === formulationID)[0];
+      let currentTest = currentFormulation.children.filter((item) => item.id === testID)[0];
+      currentTest['testData'] = testData;
+      return newState
+    },
+    updateEPrimeDataPlotType(state, {payload}) {
+      return {
+        ...state,
+        isEPrimeLog: payload,
+      }
+    },
+    updateG2PlotType(state, {payload}) {
+      return {
+        ...state,
+        g2plotType: payload,
+      }
+    }
   },
 };
 

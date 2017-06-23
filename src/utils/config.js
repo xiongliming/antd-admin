@@ -4,7 +4,7 @@ const apiPrefix = '/api/v1';
 module.exports = {
   name: 'Lab5 Admin',
   prefix: 'antdAdmin',
-  footerText: 'Ant Design Admin 版权所有 © 2016 由 zuiidea 支持',
+  footerText: 'Lab5 Admin 版权所有 © 2017 由 秦子实 支持',
   logo: 'https://t.alipayobjects.com/images/T1QUBfXo4fXXXXXXXX.png',
   iconFontUrl: '//at.alicdn.com/t/font_c4y7asse3q1cq5mi.js',
   baseURL: localURL + apiPrefix,
@@ -21,14 +21,15 @@ module.exports = {
     dashboard: {
       getDashboardDataUrl: remoteURL + apiPrefix + '/dashboard'
     },
-    dataOperation_uploader: {
+    dataOperation: {
 
       getFormulationListUrl: remoteURL + apiPrefix + '/dataOperation/formulations',                   // GET
       createFormulationUrl: remoteURL + apiPrefix + '/dataOperation/formulations',                    // POST, json
+      getFormulationTestListUrl: (id) =>  remoteURL + apiPrefix + `/dataOperation/formulations/${id}/tests`,     // GET, json
 
-      getTestListUrl: remoteURL + apiPrefix + '/dataOperation/tests',                                 // GET, json
       createTestUrl: remoteURL + apiPrefix + '/dataOperation/tests',                                  // POST, json
 
+      getTestDataListUrl: (id) => remoteURL + apiPrefix + `/dataOperation/tests/${id}/data`,          // GET, xhr
       uploadTestDataUrl: (id) => remoteURL + apiPrefix + `/dataOperation/tests/${id}/data`,           // POST, xhr
       removeTestDataUrl: (id) => remoteURL + apiPrefix + `/dataOperation/tests/${id}/data`,           // DELETE, json
 
@@ -38,4 +39,4 @@ module.exports = {
       modifyFormulationUrl: (id) => remoteURL + apiPrefix + `/dataOperation/formulations/${id}`,          // PUT, json
     }
   },
-}
+};

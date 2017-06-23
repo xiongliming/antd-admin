@@ -7,14 +7,14 @@ const { api } = config;
 
 export async function getFormulationListService () {
   return request({
-    url: api.dataOperation_uploader.getFormulationListUrl,
+    url: api.dataOperation.getFormulationListUrl,
     method: 'get',
   })
 }
 
 export async function createFormulationService (data) {
   return request({
-    url: api.dataOperation_uploader.createFormulationUrl,
+    url: api.dataOperation.createFormulationUrl,
     method: 'post',
     data,
   })
@@ -22,7 +22,7 @@ export async function createFormulationService (data) {
 
 export async function modifyFormulationService (data) {
   return request({
-    url: api.dataOperation_uploader.modifyFormulationUrl(data.id),
+    url: api.dataOperation.modifyFormulationUrl(data.id),
     method: 'put',
     data,
   })
@@ -30,34 +30,37 @@ export async function modifyFormulationService (data) {
 
 export async function getTestListService (data) {
   return request({
-    url: api.dataOperation_uploader.getTestListUrl,
+    url: api.dataOperation.getFormulationTestListUrl(data.id),
     method: 'get',
-    data,
   })
 }
 
 export async function createTestService (data) {
   return request({
-    url: api.dataOperation_uploader.createTestUrl,
+    url: api.dataOperation.createTestUrl,
     method: 'post',
     data,
   })
 }
 
-export async function removeDataFileService (data) {
-  console.log(removedFile);
+export async function getTestDataListService (data) {
   return request({
-    url: api.dataOperation_uploader.removeTestDataUrl(data.id),
+    url: api.dataOperation.getTestDataListUrl(data.id),
+    method: 'get',
+  })
+}
+
+export async function removeDataFileService (data) {
+  return request({
+    url: api.dataOperation.removeTestDataUrl(data.id),
     method: 'delete',
     data,
   })
 }
 
 export async function removeAttachmentService (data) {
-  const {id, removedFile} = data;
-  console.log('services>>> ', data);
   return request({
-    url: api.dataOperation_uploader.removeTestAttachmentUrl(id),
+    url: api.dataOperation.removeTestAttachmentUrl(data.id),
     method: 'delete',
     data,
   })

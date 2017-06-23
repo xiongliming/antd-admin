@@ -60,11 +60,11 @@ class EditableCell extends React.Component {
   }
 }
 
-class EditableTable extends React.Component {
+class FormulationEditTable extends React.Component {
   constructor(props) {
     super(props);
     this.columns = [{
-      title: 'key',
+      title: <b>Key</b>,
       dataIndex: 'keyName',
       render: (text, record, index) => {
         return (
@@ -75,7 +75,7 @@ class EditableTable extends React.Component {
         )
       },
     }, {
-      title: 'value',
+      title: <b>value</b>,
       dataIndex: 'valueName',
       render: (text, record, index) => {
         return (
@@ -86,7 +86,7 @@ class EditableTable extends React.Component {
         )
       },
     }, {
-      title: 'OP.',
+      title: <b>OPs.</b>,
       dataIndex: 'operation',
       render: (text, record, index) => {
         return (
@@ -101,8 +101,8 @@ class EditableTable extends React.Component {
     }];
 
     this.state = {
-      id: 0,
-      dataSource: [],
+      id: this.props.formulationID,
+      dataSource: this.props.formulationProperties,
     };
   }
   onStateChange = () => {
@@ -134,9 +134,9 @@ class EditableTable extends React.Component {
       dataSource: [...dataSource, newData],
     });
   };
-  componentDidMount() {
-    this.setState({id: this.props.formulationID, dataSource: this.props.formulationProperties});
-  }
+  // componentDidMount() {
+  //   this.setState({id: this.props.formulationID, dataSource: this.props.formulationProperties});
+  // }
   componentWillReceiveProps(nextProps) {
     this.setState({id: nextProps.formulationID, dataSource: nextProps.formulationProperties});
   }
@@ -155,6 +155,40 @@ class EditableTable extends React.Component {
   }
 }
 
-const FormulationEditTable = EditableTable;
+class TestDisplayTable extends React.Component {
+  constructor(props) {
+    super(props);
+    this.columns = [{
+      title: <b>Name</b>,
+      dataIndex: 'name',
+      width: '55%',
+    }, {
+      title: <b>Value</b>,
+      dataIndex: 'value',
+    }];
 
-export default FormulationEditTable
+    this.state = {
+      formulationID: this.props.formulationID,
+      dataSource: this.props.testProperties,
+    };
+  }
+  // componentDidMount() {
+  //   this.setState({formulationID: this.props.formulationID, dataSource: this.props.testProperties});
+  // }
+  componentWillReceiveProps(nextProps) {
+    this.setState({formulationID: nextProps.formulationID, dataSource: nextProps.testProperties});
+  }
+
+  render() {
+    const {dataSource} = this.state;
+    const columns = this.columns;
+    return (
+      <div>
+        <Table bordered dataSource={dataSource} columns={columns} pagination={false} size="small"/>
+      </div>
+    );
+  }
+}
+
+
+export {FormulationEditTable, TestDisplayTable}

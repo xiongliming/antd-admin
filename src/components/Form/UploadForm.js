@@ -345,7 +345,7 @@ const UploadForm = Form.create({
   const dataUploaderProps = {
     name: 'datafile',
     accept: '.txt',
-    action: api.dataOperation_uploader.uploadTestDataUrl(step.testID),
+    action: api.dataOperation.uploadTestDataUrl(step.testID),
     showUploadList: true,
     headers: {
       'Access-Control-Allow-Origin': '*',
@@ -355,7 +355,7 @@ const UploadForm = Form.create({
   const attachmentUploaderProps = {
     name: 'attachments',
     accept: '.txt,.doc',
-    action: api.dataOperation_uploader.uploadTestAttachmentUrl(step.testID),
+    action: api.dataOperation.uploadTestAttachmentUrl(step.testID),
     showUploadList: true,
     multiple: true,
     headers: {
