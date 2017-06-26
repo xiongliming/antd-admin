@@ -28,6 +28,13 @@ export async function modifyFormulationService (data) {
   })
 }
 
+export async function getFormulationDataListService (data) {
+  return request({
+    url: api.dataOperation.getFormulationDataListUrl(data.id),
+    method: 'get',
+  })
+}
+
 export async function getTestListService (data) {
   return request({
     url: api.dataOperation.getFormulationTestListUrl(data.id),
@@ -40,6 +47,14 @@ export async function createTestService (data) {
     url: api.dataOperation.createTestUrl,
     method: 'post',
     data,
+  })
+}
+
+export async function deleteTestService (data) {
+  return request({
+    url: api.dataOperation.deleteTestUrl(data.id),
+    method: 'delete',
+    data
   })
 }
 

@@ -7,6 +7,9 @@
     "dva-loading": "^0.2.0",
     "g2": "^2.3.4",
     "g2-react": "^1.2.0",
+    "glslify": "^6.1.0",
+    "glslify-hex": "^2.1.1",
+    "ify-loader": "^1.0.4",
     "lodash": "^4.17.4",
     "moment": "^2.18.1",
     "plotly.js": "^1.28.2",
@@ -54,6 +57,16 @@
     "globals": [
       "location",
       "localStorage"
+    ]
+  },
+  "browserify": {
+    "transform": [
+      "glslify"
+    ]
+  },
+  "glslify": {
+    "transform": [
+      "glslify-hex"
     ]
   }
 }

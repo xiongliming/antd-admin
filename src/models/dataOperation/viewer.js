@@ -6,23 +6,27 @@ import {
   modifyFormulationService,
   getFormulationListService,
   getTestListService,
-  getTestDataListService
+  getTestDataListService,
+  getFormulationDataListService,
+  deleteTestService,
 } from '../../services/dataOperation'
 const moment = require('moment');
 
 const uploader = {
   namespace: 'dataOperation_viewer',
   state: {
+    plot2dType: 'line',             // point | line
+    plot2dEPrimeDataType: 'linear', // linear | log
+    plot3dPlotTarget: 'Tan Delta',  // Tan Delta | E'
     selectedFormulationID: 0,
     selectedTestID: 0,
     formulationList: [],
-    isEPrimeLog: false,
-    g2plotType: 'line',
   },
   subscriptions: {
     setup({history, dispatch}) {
       return history.listen(({pathname}) => {
         if (pathname === '/dataOperation/viewer/') {
+          dispatch({type: 'renew'});
           dispatch({type: 'getFormulationList'});
         }
       });
@@ -33,7 +37,7 @@ const uploader = {
       const data = yield call(getFormulationListService);
       yield put({type: 'updateFormulationList', payload: data.formulations});
     },
-    *getTestList ({payload}, {put, call, select}) {
+    *getFormulationTestList ({payload}, {put, call, select}) {
       const data = yield call(getTestListService, payload);
       yield put({
         type: 'updateFormulationTestList',
@@ -43,14 +47,24 @@ const uploader = {
         }
       });
     },
-    *getTestDataList ({payload}, {put, call, select}) {
+    *getFormulationTestDataList ({payload}, {put, call, select}) {
       const data = yield call(getTestDataListService, payload);
       yield put({
         type: 'updateFormulationTestDataList',
         payload: {
-          formulationID: data['test']['formulation_id'],
-          testID: data['test']['test_id'],
-          testData: data['test']['test_data'],
+          formulationID: data['formulation_id'],
+          testID: data['test_id'],
+          testData: data['test_data'],
+        }
+      });
+    },
+    *getFormulationDataList ({payload}, {put, call, select}) {
+      const data = yield call(getFormulationDataListService, payload);
+      yield put({
+        type: 'updateFormulationDataList',
+        payload: {
+          formulationID: data['formulation_id'],
+          formulationLines: data['lines'],
         }
       });
     },
@@ -58,14 +72,35 @@ const uploader = {
       const data = yield call(modifyFormulationService, payload);
       yield put({type: 'updateFormulation', payload: data})
     },
+    *deleteTest ({payload}, {put, call, select}) {
+      const data = yield call(deleteTestService, payload);
+      yield put({
+        type: 'updateFormulationTestListAfterDelete',
+        payload: {
+          formulationID: data['formulation_id'],
+          testID: data['test_id'],
+        }
+      });
+    },
   },
   reducers: {
+    renew(state) {
+      return {
+        plot2dType: 'line',             // point | line
+        plot2dEPrimeDataType: 'linear', // linear | log
+        plot3dPlotTarget: 'Tan Delta',  // Tan Delta | E'
+        selectedFormulationID: 0,
+        selectedTestID: 0,
+        formulationList: [],
+      }
+    },
     updateFormulationList(state, {payload}) {
       let newState = cloneDeep(state);
       newState.formulationList = payload.map((item) => {
         item['id'] = item.id;
         item['name'] = item.name;
         item['date'] = moment.unix(item.date);
+        item['lines'] = [];
 
         item['value'] = item.id;
         item['label'] = item.name;
@@ -96,16 +131,18 @@ const uploader = {
         currentFormulation['children'].push({
           id: item.id,
           name: item.name,
-          measure_type: item.measure_type,
+          measureType: item.measure_type,
           thickness: item.thickness,
-          temperature_max: item.temperature_max,
-          temperature_min: item.temperature_min,
-          frequency_max: item.frequency_max,
-          frequency_min: item.frequency_min,
-          test_type: item.test_type,
-          data_file_url: item.data_file_url,
+          temperatureMax: item.temperature_max,
+          temperatureMin: item.temperature_min,
+          frequencyMax: item.frequency_max,
+          frequencyMin: item.frequency_min,
+          testType: item.test_type,
+          dataFileUrl: item.data_file_url,
           date: moment.unix(item.date),
-          formulation_id: item.formulation_id,
+          formulationID: item.formulation_id,
+          attachmentUrlList: item.attachment_url,
+          data: [],
 
           value: item.id,
           label: item.name,
@@ -114,26 +151,53 @@ const uploader = {
       });
       return newState
     },
+    updateFormulationTestListAfterDelete(state, {payload}) {
+      let newState = cloneDeep(state);
+      const {formulationID, testID} = payload;
+      const currentFormulation = newState.formulationList.filter((item) => item.id === formulationID)[0];
+      // delete test from formulation children
+      const tIndex = currentFormulation.children.findIndex((item) => item.id === testID);
+      currentFormulation.children.splice(tIndex, 1);
+      // delete line from formulation lines
+      const lIndex = currentFormulation.lines.findIndex((item) => item.id === testID);
+      currentFormulation.lines.splice(lIndex, 1);
+      // reset selector
+      newState.selectedTestID = 0;
+      return newState
+    },
     updateFormulationTestDataList(state, {payload}) {
       let newState = cloneDeep(state);
       const {formulationID, testID, testData} = payload;
       let currentFormulation = newState.formulationList.filter((item) => item.id === formulationID)[0];
       let currentTest = currentFormulation.children.filter((item) => item.id === testID)[0];
-      currentTest['testData'] = testData;
+      currentTest['data'] = testData;
       return newState
     },
-    updateEPrimeDataPlotType(state, {payload}) {
+    updateFormulationDataList(state, {payload}) {
+      let newState = cloneDeep(state);
+      const {formulationID, formulationLines} = payload;
+      const currentFormulation = newState.formulationList.filter((item) => item.id === formulationID)[0];
+      currentFormulation['lines'] = formulationLines;
+      return newState
+    },
+    updatePlot2dEPrimeDataType(state, {payload}) {
       return {
         ...state,
-        isEPrimeLog: payload,
+        plot2dEPrimeDataType: payload,
       }
     },
-    updateG2PlotType(state, {payload}) {
+    updatePlot2dType(state, {payload}) {
       return {
         ...state,
-        g2plotType: payload,
+        plot2dType: payload,
       }
-    }
+    },
+    updatePlot3dPlotTarget(state, {payload}) {
+      return {
+        ...state,
+        plot3dPlotTarget: payload,
+      }
+    },
   },
 };
 

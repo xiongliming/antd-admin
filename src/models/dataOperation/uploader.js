@@ -60,6 +60,7 @@ const uploader = {
     setup({history, dispatch}) {
       return history.listen(({pathname}) => {
         if (pathname === '/dataOperation/uploader/') {
+          dispatch({type: 'renew'});
           dispatch({type: 'getFormulationList'});
         }
       });

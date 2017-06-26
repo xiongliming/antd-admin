@@ -23,9 +23,11 @@ class EditableCell extends React.Component {
   edit = () => {
     this.setState({editable: true});
   };
+
   componentWillReceiveProps(nextProps) {
     this.setState({value: nextProps.value});
   }
+
   render() {
     const {value, editable} = this.state;
     return (
@@ -93,9 +95,15 @@ class FormulationEditTable extends React.Component {
           this.state.dataSource.length > 1 ?
             (
               <Popconfirm title="Sure to delete?" onConfirm={() => this.onDelete(index)}>
-                <Button shape="circle" type="danger" icon='minus' size='small' className={styles.editableAddBtn} />
+                <Button shape="circle" type="danger" icon='delete' size='small'/>
               </Popconfirm>
-            ) : null
+            )
+            :
+            (
+              <Tooltip title="At least one property" placement="right" arrowPointAtCenter>
+                <Button shape="circle" type="danger" icon='delete' size='small' disabled/>
+              </Tooltip>
+            )
         );
       },
     }];
@@ -105,6 +113,7 @@ class FormulationEditTable extends React.Component {
       dataSource: this.props.formulationProperties,
     };
   }
+
   onStateChange = () => {
     this.props.dispatch({
       type: 'dataOperation_viewer/modifyFormulation',
@@ -134,9 +143,7 @@ class FormulationEditTable extends React.Component {
       dataSource: [...dataSource, newData],
     });
   };
-  // componentDidMount() {
-  //   this.setState({id: this.props.formulationID, dataSource: this.props.formulationProperties});
-  // }
+
   componentWillReceiveProps(nextProps) {
     this.setState({id: nextProps.formulationID, dataSource: nextProps.formulationProperties});
   }
@@ -146,8 +153,9 @@ class FormulationEditTable extends React.Component {
     const columns = this.columns;
     return (
       <div>
-        <Tooltip title="Insert a new line" placement="topLeft" arrowPointAtCenter>
-          <Button shape="circle" type="primary" icon='plus' size='small' className={styles.editableAddBtn} onClick={this.handleAdd}/>
+        <Tooltip title="Insert a new line" placement="right" arrowPointAtCenter>
+          <Button shape="circle" type="primary" icon='plus' size='small' className={styles.editableAddBtn}
+                  onClick={this.handleAdd}/>
         </Tooltip>
         <Table bordered dataSource={dataSource} columns={columns} pagination={false} size="small"/>
       </div>
@@ -165,18 +173,43 @@ class TestDisplayTable extends React.Component {
     }, {
       title: <b>Value</b>,
       dataIndex: 'value',
+      render: (text, record, index) => {
+        if (index === 8) {
+          return <div><a href={text}>data</a></div>
+        } else if (index === 10) {
+          const a_list = record.value.map((item, index) =>
+            <p key={`attachment-key${index}`}>
+              <a href={item['attachment_url']}>{item['attachment_name']}</a>
+            </p>
+          );
+          return (
+            <div>{a_list}</div>
+          )
+        }
+        return text;
+      },
     }];
 
     this.state = {
-      formulationID: this.props.formulationID,
       dataSource: this.props.testProperties,
+      formulationID: this.props.formulationID,
+      testID: this.props.testID
     };
   }
-  // componentDidMount() {
-  //   this.setState({formulationID: this.props.formulationID, dataSource: this.props.testProperties});
-  // }
+
   componentWillReceiveProps(nextProps) {
-    this.setState({formulationID: nextProps.formulationID, dataSource: nextProps.testProperties});
+    this.setState({
+      dataSource: nextProps.testProperties,
+      formulationID: nextProps.formulationID,
+      testID: nextProps.testID
+    });
+  }
+
+  onDelete(formulationID, testID) {
+    this.props.dispatch({
+      type: 'dataOperation_viewer/deleteTest',
+      payload: {formulationID: formulationID, id: testID}
+    });
   }
 
   render() {
@@ -185,6 +218,10 @@ class TestDisplayTable extends React.Component {
     return (
       <div>
         <Table bordered dataSource={dataSource} columns={columns} pagination={false} size="small"/>
+        <Popconfirm title="Sure to delete this Test?" placement="bottomLeft"
+                    onConfirm={() => this.onDelete(this.state.formulationID, this.state.testID)} arrowPointAtCenter>
+          <Button shape="circle" type="danger" icon='delete' size='small' className={styles.tableDeleteBtn}/>
+        </Popconfirm>
       </div>
     );
   }
