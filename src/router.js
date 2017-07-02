@@ -70,6 +70,14 @@ const Routers = function ({ history, app }) {
             }, 'dataOperation_viewer')
           },
         }, {
+          path: 'dataAnalysis/',
+          getComponent (nextState, cb) {
+            require.ensure([], require => {
+              registerModel(app, require('./models/analyser'));
+              cb(null, require('./routes/dataAnalysis/'))
+            }, 'dataAnalysis')
+          },
+        }, {
           path: 'UIElement/iconfont',
           getComponent (nextState, cb) {
             require.ensure([], require => {

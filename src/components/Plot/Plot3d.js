@@ -68,24 +68,72 @@ class Plot3d extends React.Component {
   }
 }
 
-// {
-//   type: 'scatter3d',
-//     mode: 'lines+markers',
-//   x: x,
-//   y: y,
-//   z: z,
-//   line: {
-//   width: 6,
-//     color: c,
-//     colorscale: "Viridis"
-// },
-//   marker: {
-//     size: 3.5,
-//       color: c,
-//       colorscale: "Greens",
-//       cmin: -20,
-//       cmax: 50
-//   }
-// },
+class Plot3dTrained extends React.Component {
+  constructor(props) {
+    super(props);
 
-export default Plot3d;
+    this.state = {
+      isShowGrid: this.props.isShowGrid,
+      dataSource: this.props.gridLines,
+    };
+  }
+
+  componentDidMount() {
+    const data = [];
+    for (let line of this.state.dataSource.data_traces) {
+      let trace = {
+        type: 'scatter3d',
+        mode: 'lines',
+        x: line.x,
+        y: line.y,
+        z: line.z,
+        line: {
+          width: 5,
+          color: '#9AD681',
+        },
+      };
+      data.push(trace)
+    }
+    if (this.state.isShowGrid) {
+      for (let line of this.state.dataSource.grid_traces) {
+        let trace = {
+          type: 'scatter3d',
+          mode: 'lines',
+          x: line.x,
+          y: line.y,
+          z: line.z,
+          line: {
+            width: 1,
+            color: '#4FAAEB',
+          },
+        };
+        data.push(trace)
+      }
+    }
+
+    const layout = {
+      height: 600,
+      margin: {l: 0, r: 0, b: 0, t: 0},
+      scene: {
+        xaxis: {
+          title: "X - Temperature (℃)",
+        },
+        yaxis: {
+          title: "Y - Frequency (㎐)",
+        },
+        zaxis: {
+          title: 'Tan Delta' ,
+        },
+      },
+    };
+    Plotly.plot('plot3d', data, layout);
+  }
+
+  render() {
+    return (
+      <div id="plot3d"></div>
+    );
+  }
+}
+
+export {Plot3d, Plot3dTrained};

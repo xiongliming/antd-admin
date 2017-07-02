@@ -7,7 +7,7 @@ const { api } = config;
 
 export async function getFormulationListService () {
   return request({
-    url: api.dataOperation.getFormulationListUrl,
+    url: api.dataAnalysis.getFormulationListUrl,
     method: 'get',
   })
 }
@@ -24,21 +24,46 @@ export async function modifyFormulationService (data) {
   return request({
     url: api.dataOperation.modifyFormulationUrl(data.id),
     method: 'put',
+    data,
   })
 }
 
-export async function deleteFormulationService (data) {
+export async function trainFormulationModelService (data) {
   return request({
-    url: api.dataOperation.deleteFormulationUrl(data.id),
-    method: 'delete',
+    url: api.dataAnalysis.trainFormulationModelUrl(data.id),
+    method: 'get',
+    data,
+  })
+}
+
+export async function getFormulationModelService (data) {
+  return request({
+    url: api.dataAnalysis.trainFormulationModelUrl(data.id),
+    method: 'get',
+    data,
+  })
+}
+
+export async function getFormulationTrainingLogService (data) {
+  return request({
+    url: api.dataAnalysis.getFormulationTrainingLogUrl(data.id),
+    method: 'get',
     data,
   })
 }
 
 export async function getFormulationDataListService (data) {
   return request({
-    url: api.dataOperation.getFormulationDataListUrl(data.id),
+    url: api.dataAnalysis.getFormulationDataListUrl(data.id),
     method: 'get',
+  })
+}
+
+export async function getFormulationModelTrainedDataListService (data) {
+  return request({
+    url: api.dataAnalysis.getFormulationModelTrainedDataListUrl(data.id),
+    method: 'get',
+    data,
   })
 }
 

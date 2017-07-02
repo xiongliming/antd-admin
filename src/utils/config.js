@@ -39,6 +39,16 @@ module.exports = {
       removeTestAttachmentUrl: (id) => remoteURL + apiPrefix + `/dataOperation/tests/${id}/attachments`,  // DELETE, xhr
 
       modifyFormulationUrl: (id) => remoteURL + apiPrefix + `/dataOperation/formulations/${id}`,          // PUT, json
+      deleteFormulationUrl: (id) => remoteURL + apiPrefix + `/dataOperation/formulations/${id}`,          // DELETE, json
+    },
+    dataAnalysis: {
+      trainFormulationModelUrl: (id) => remoteURL + apiPrefix + `/dataAnalysis/formulations/${id}/models`,          // GET, json
+      getFormulationTrainingLogUrl: (id) => remoteURL + apiPrefix + `/dataAnalysis/formulations/${id}/logs`,          // GET, json
+
+      getFormulationListUrl: remoteURL + apiPrefix + `/dataAnalysis/formulations/`,          // GET
+      getFormulationDataListUrl: (id) => remoteURL + apiPrefix + `/dataAnalysis/formulations/${id}/data`,    // GET, xhr
+      getFormulationModelTrainedDataListUrl: (id) => remoteURL + apiPrefix + `/dataAnalysis/formulations/${id}/models/${0}/data`,    // GET, xhr
+      getFormulationModelDataListUrl: (fid, mid) => remoteURL + apiPrefix + `/dataAnalysis/formulations/${fid}/models/${mid}/data`,    // GET, xhr
     }
   },
 };

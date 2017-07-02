@@ -354,7 +354,7 @@ const UploadForm = Form.create({
   // step4: uploader_upload_attachments
   const attachmentUploaderProps = {
     name: 'attachments',
-    accept: '.txt,.doc,.xls,.xlsx',
+    accept: '.txt,.doc',
     action: api.dataOperation.uploadTestAttachmentUrl(step.testID),
     showUploadList: true,
     multiple: true,

@@ -2,8 +2,11 @@
  * Created by zealot on 17/6/20.
  */
 import React, {PropTypes} from 'react'
-import {Table, Input, Icon, Button, Popconfirm, Tooltip} from 'antd';
+import {Table, Input, InputNumber, Icon, Button, Popconfirm, Tooltip, Progress, Row, Col} from 'antd';
 import styles from './EditableDataTable.less'
+import {api} from '../../utils/config'
+import {getFormulationTrainingLogService} from '../../services/dataAnalysis'
+
 
 class EditableCell extends React.Component {
   state = {
@@ -111,6 +114,7 @@ class FormulationEditTable extends React.Component {
     this.state = {
       id: this.props.formulationID,
       dataSource: this.props.formulationProperties,
+      children: this.props.childrenCount,
     };
   }
 
@@ -132,6 +136,12 @@ class FormulationEditTable extends React.Component {
     dataSource.splice(index, 1);
     this.setState({dataSource}, this.onStateChange);
   };
+  onDeleteFormulation = (index) => {
+    this.props.dispatch({
+      type: 'dataOperation_viewer/deleteFormulation',
+      payload: {id: index}
+    })
+  };
   handleAdd = () => {
     const {count, dataSource} = this.state;
     const newData = {
@@ -145,7 +155,11 @@ class FormulationEditTable extends React.Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    this.setState({id: nextProps.formulationID, dataSource: nextProps.formulationProperties});
+    this.setState({
+      id: nextProps.formulationID,
+      dataSource: nextProps.formulationProperties,
+      children: nextProps.childrenCount
+    });
   }
 
   render() {
@@ -158,6 +172,166 @@ class FormulationEditTable extends React.Component {
                   onClick={this.handleAdd}/>
         </Tooltip>
         <Table bordered dataSource={dataSource} columns={columns} pagination={false} size="small"/>
+        <Popconfirm title="Sure to delete this Formulation?" placement="bottomLeft"
+                    onConfirm={() => this.onDeleteFormulation(this.state.id)} arrowPointAtCenter>
+          <Button shape="circle" type="danger" icon='delete' size='small' className={styles.tableDeleteBtn}
+                  disabled={Boolean(this.state.children && this.state.children !== 0)}/>
+        </Popconfirm>
+      </div>
+    );
+  }
+}
+
+class FormulationFitTable extends React.Component {
+  constructor(props) {
+    super(props);
+    this.columns = [{
+      title: <b>Key</b>,
+      dataIndex: 'keyName',
+    }, {
+      title: <b>value</b>,
+      dataIndex: 'valueName',
+    }];
+    this.timer = null;
+    this.state = {
+      id: this.props.formulationID,
+      dataSource: this.props.formulationProperties,
+      redisTrainingTaskID: this.props.redisTrainingTaskID,
+      redisLoggingTaskID: this.props.redisLoggingTaskID,
+      trainFlag: this.props.trainFlag,
+      trainingLoss: this.props.trainingLoss,
+      trainingEpochs: 10,
+      trainingEpoch: 0,
+      intervalID: -1,
+    };
+  }
+
+  onTrainFormulation = (index) => {
+    this.props.dispatch({
+      type: 'dataAnalysis/trainFormulationModel',
+      payload: {id: index, action: 'start', epochs: this.state.trainingEpochs}
+    });
+  };
+
+  componentDidMount() {
+    console.log(this.state.trainFlag);
+    // console.log('didmount>>> ');
+    if (this.state.trainFlag === 'training' && this.timer === null) {
+      this.timer = setInterval(() => {
+        // console.log('setInterval>>> ', this.timer);
+        getFormulationTrainingLogService({
+          id: this.state.id,
+          redisLoggingTaskID: this.state.redisLoggingTaskID
+        }).then((response) => {
+          if (response['model_state'] && response['model_state'] === 'training') {
+            // console.log('training>>> ', response, this.timer);
+            this.setState({
+              trainingEpoch: response['epoch'],
+              trainingEpochs: response['epochs'],
+              trainingLoss: response['loss'] ? response['loss'] : this.state.trainingLoss
+            })
+          } else if (response['model_state'] && response['model_state'] === 'trained') {
+            clearInterval(this.timer);
+            this.props.dispatch({
+              type: 'dataAnalysis/getFormulationModel',
+              payload: {
+                id: this.state.id,
+                action: 'getPlotData',
+                redisTrainingTaskID: this.state.redisTrainingTaskID,
+                trainingLoss: this.state.trainingLoss,
+              }
+            });
+            // console.log('trained>>> ', response, this.timer);
+          }
+        });
+      }, 1000)
+    } else {
+      clearInterval(this.timer);
+    }
+  }
+
+  // componentWillMount() {
+  //   console.log('mount>>> ', this.timer)
+  // }
+  componentWillUnmount() {
+    clearInterval(this.timer);
+  }
+
+  //
+  // componentWillUpdate(prevProps, prevState) {
+  //   if (this.state.trainingEpoch !== 0 && this.state.trainingEpoch === this.state.trainingEpochs) {
+  //     clearInterval(this.timer);
+  //     console.log('willUpdate>>> ', this.timer)
+  //   }
+  // }
+  //
+  // componentDidUpdate(prevProps, prevState) {
+  //   if (this.state.trainFlag == 'trained') {
+  //     console.log('didUpdate>>> ', this.timer);
+  //   }
+  // }
+
+
+  render() {
+    const {dataSource} = this.state;
+    const columns = this.columns;
+    return (
+      <div>
+        <Row type="flex" justify="center" style={{margin: '0px auto 16px auto'}} gutter={16}>
+          <Col>
+            <InputNumber size="large" min={10} max={1000} placeholder="Input Epoch" style={{width: '85px'}}
+                         onChange={(value) => {
+                           value > 9 ? this.setState({trainingEpochs: value}) : this.setState({trainingEpochs: 10})
+                         }}
+            />
+          </Col>
+          <Col>
+            <Popconfirm title="Sure to Fit this Formulation? This operation may take some time." placement="bottomLeft"
+                        onConfirm={() => this.onTrainFormulation(this.state.id)} arrowPointAtCenter>
+              <Button type="primary" icon='calculator' size='large'
+                      loading={this.state.trainFlag === 'training'}>{this.state.trainFlag !== 'training' ? 'Train Model' : 'Training'}</Button>
+            </Popconfirm>
+          </Col>
+        </Row>
+        <Row type="flex" justify="center" style={{margin: '0px auto 16px auto'}}>
+          <Col>
+            <Progress type="circle"
+                      percent={this.state.trainFlag === 'trained' ? 100 : this.state.trainingEpoch * 100 / this.state.trainingEpochs}
+                      format={
+                        (percent) => {
+                          if (percent === 100 || this.state.trainFlag === 'trained') {
+                            return <div>{'Finished'}</div>
+
+                          } else {
+                            return (
+                              <div>
+                                <div>{'Epoch:'}</div>
+                                <div>{`${this.state.trainingEpoch}/${this.state.trainingEpochs}`}</div>
+                              </div>
+                            )
+                          }
+                        }
+                      }
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <span>{`Loss: ${this.state.trainingLoss}`}</span>
+          </Col>
+        </Row>
+        <Row style={{margin: '0px auto 16px auto'}}>
+          <Col>
+            <Progress
+              percent={this.state.trainFlag === 'trained' ? 100 : this.state.trainingEpoch * 100 / this.state.trainingEpochs}
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Table bordered dataSource={dataSource} columns={columns} pagination={false} size="small"/>
+          </Col>
+        </Row>
       </div>
     );
   }
@@ -228,4 +402,4 @@ class TestDisplayTable extends React.Component {
 }
 
 
-export {FormulationEditTable, TestDisplayTable}
+export {FormulationEditTable, TestDisplayTable, FormulationFitTable}

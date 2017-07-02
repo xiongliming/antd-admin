@@ -2,8 +2,11 @@
  * Created by zealot on 19/6/20.
  */
 import {cloneDeep} from 'lodash'
+import { browserHistory } from 'react-router'
+
 import {
   modifyFormulationService,
+  deleteFormulationService,
   getFormulationListService,
   getTestListService,
   getTestDataListService,
@@ -71,6 +74,13 @@ const uploader = {
     *modifyFormulation ({payload}, {put, call, select}) {
       const data = yield call(modifyFormulationService, payload);
       yield put({type: 'updateFormulation', payload: data})
+    },
+    *deleteFormulation ({payload}, {put, call, select}) {
+      const data = yield call(deleteFormulationService, payload);
+      console.log(data);
+
+      yield put({type: 'renew'});
+      yield put({type: 'getFormulationList'});
     },
     *deleteTest ({payload}, {put, call, select}) {
       const data = yield call(deleteTestService, payload);
@@ -168,8 +178,8 @@ const uploader = {
     updateFormulationTestDataList(state, {payload}) {
       let newState = cloneDeep(state);
       const {formulationID, testID, testData} = payload;
-      let currentFormulation = newState.formulationList.filter((item) => item.id === formulationID)[0];
-      let currentTest = currentFormulation.children.filter((item) => item.id === testID)[0];
+      const currentFormulation = newState.formulationList.filter((item) => item.id === formulationID)[0];
+      const currentTest = currentFormulation.children.filter((item) => item.id === testID)[0];
       currentTest['data'] = testData;
       return newState
     },
@@ -197,6 +207,13 @@ const uploader = {
         ...state,
         plot3dPlotTarget: payload,
       }
+    },
+    test(state, {payload}) {
+      let newState = cloneDeep(state);
+      // const testIndex = newState.formulationList.findIndex((item) => item.id === 2)[0];
+      newState.formulationList.splice(1, 1);
+      console.log(newState);
+      return newState
     },
   },
 };

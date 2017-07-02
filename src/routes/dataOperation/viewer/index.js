@@ -3,7 +3,7 @@
  */
 import React from 'react'
 import {cloneDeep} from 'lodash'
-import {Cascader, Row, Col, Card, Switch} from 'antd';
+import {Cascader, Row, Col, Card, Switch, Spin} from 'antd';
 import {connect} from 'dva'
 import createG2 from 'g2-react'
 const moment = require('moment');
@@ -23,7 +23,7 @@ const rightCol = {
   md: {span: 18},
 };
 
-const Viewer = ({dispatch, dataOperation_viewer}) => {
+const Viewer = ({dispatch, dataOperation_viewer, loading}) => {
   const cascaderOnChange = (value, selectedOptions) => {
     // Formulation selected
     if (selectedOptions.length === 1) {
@@ -93,6 +93,7 @@ const Viewer = ({dispatch, dataOperation_viewer}) => {
           <FormulationEditTable dispatch={dispatch}
                                 formulationProperties={propertyList}
                                 formulationID={selectedFormulationID}
+                                childrenCount={selectedFormulation.children && selectedFormulation.children.length}
           />
         </Card>
       )
@@ -128,26 +129,31 @@ const Viewer = ({dispatch, dataOperation_viewer}) => {
   };
 
   const PlotConfigRow = () => {
-    const {selectedTestID, selectedFormulationID} = dataOperation_viewer;
+    const {selectedTestID, selectedFormulationID, formulationList} = dataOperation_viewer;
     // FormulationEditTable
     if (selectedFormulationID !== 0 && selectedTestID === 0) {
-      return (
-        <Row gutter={16} type="flex" style={{padding: '5px 0px 5px 0px', margin: '0px 0px 16px 16px'}}>
-          <Col>
-            <label>Plot data: </label>
-            <Switch checkedChildren="Tan Delta" unCheckedChildren="E'"
-                    checked={dataOperation_viewer.plot3dPlotTarget === 'Tan Delta'}
-                    disabled={dataOperation_viewer.selectedTestID !== 0}
-                    onChange={(checked) => {
-                      dispatch({
-                        type: 'dataOperation_viewer/updatePlot3dPlotTarget',
-                        payload: checked ? 'Tan Delta' : "E'"
-                      })
-                    }}
-            />
-          </Col>
-        </Row>
-      )
+      const selectedFormulation = formulationList.filter((item) => item.id === selectedFormulationID)[0];
+      if (selectedFormulation.children && selectedFormulation.children.length !== 0) {
+        return (
+          <Row gutter={16} type="flex" style={{padding: '5px 0px 5px 0px', margin: '0px 0px 16px 16px'}}>
+            <Col>
+              <label>Plot data: </label>
+              <Switch checkedChildren="Tan Delta" unCheckedChildren="E'"
+                      checked={dataOperation_viewer.plot3dPlotTarget === 'Tan Delta'}
+                      disabled={dataOperation_viewer.selectedTestID !== 0}
+                      onChange={(checked) => {
+                        dispatch({
+                          type: 'dataOperation_viewer/updatePlot3dPlotTarget',
+                          payload: checked ? 'Tan Delta' : "E'"
+                        })
+                      }}
+              />
+            </Col>
+          </Row>
+        )
+      } else {
+        return <div/>
+      }
     } else if (selectedFormulationID !== 0 && selectedTestID !== 0) {
       return (
         <Row gutter={16} type="flex" style={{padding: '5px 0px 5px 0px', margin: '0px 0px 16px 16px'}}>
@@ -178,9 +184,7 @@ const Viewer = ({dispatch, dataOperation_viewer}) => {
         </Row>
       )
     } else {
-      return (
-        <div/>
-      )
+      return <div/>
     }
   };
 
@@ -220,33 +224,43 @@ const Viewer = ({dispatch, dataOperation_viewer}) => {
     }
     return <div/>
   };
+  console.log(loading);
 
   return (
-    <Row gutter={24}>
-      <Col {...leftCol}>
-        <Row>
-          <Cascader style={{width: '100%', marginBottom: '16px'}}
-                    options={dataOperation_viewer.formulationList}
-                    loadData={cascaderDataLoader}
-                    onChange={cascaderOnChange}
-                    size="large" changeOnSelect
-          />
-        </Row>
-        <Row>
-          <PropertyCard/>
-        </Row>
-      </Col>
-      <Col {...rightCol}>
-        <PlotConfigRow/>
-        <Row>
-          <Plot2dCard/>
-          <Plot3dCard/>
-        </Row>
-      </Col>
-    </Row>
+    <Spin spinning={loading} tip="loading...">
+      <Row gutter={24}>
+        <Col {...leftCol}>
+          <Row>
+            <Cascader style={{width: '100%', marginBottom: '16px'}}
+                      options={dataOperation_viewer.formulationList}
+                      loadData={cascaderDataLoader}
+                      onChange={cascaderOnChange}
+                      size="large" changeOnSelect
+            />
+          </Row>
+          <Row>
+            <PropertyCard/>
+          </Row>
+        </Col>
+        <Col {...rightCol}>
+          <PlotConfigRow/>
+          <Row>
+            <Plot2dCard/>
+            <Plot3dCard/>
+          </Row>
+        </Col>
+      </Row>
+    </Spin>
   );
 };
 
+const mapStateToProps = (state) => {
+  return {
+    dataOperation_viewer: state.dataOperation_viewer,
+    loading: state.loading.models.dataOperation_viewer
+  }
+};
+
 export default connect(
-  ({dataOperation_viewer}) => ({dataOperation_viewer})
+  (mapStateToProps)
 )(Viewer)
