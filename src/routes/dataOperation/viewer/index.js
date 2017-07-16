@@ -9,7 +9,7 @@ import createG2 from 'g2-react'
 const moment = require('moment');
 import {FormulationEditTable, TestDisplayTable} from '../../../components/DataTable/EditableDataTable'
 import Plot2d from '../../../components/Plot/Plot2d'
-import Plot3d from '../../../components/Plot/Plot3d'
+import {Plot3d} from '../../../components/Plot/Plot3d'
 import styles from './index.less'
 
 
@@ -224,7 +224,6 @@ const Viewer = ({dispatch, dataOperation_viewer, loading}) => {
     }
     return <div/>
   };
-  console.log(loading);
 
   return (
     <Spin spinning={loading} tip="loading...">

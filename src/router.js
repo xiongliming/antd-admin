@@ -70,6 +70,14 @@ const Routers = function ({ history, app }) {
             }, 'dataOperation_viewer')
           },
         }, {
+          path: 'dataOperation/searcher',
+          getComponent (nextState, cb) {
+            require.ensure([], require => {
+              registerModel(app, require('./models/dataOperation/searcher'));
+              cb(null, require('./routes/dataOperation/searcher/'))
+            }, 'dataOperation_searcher')
+          },
+        }, {
           path: 'dataAnalysis/',
           getComponent (nextState, cb) {
             require.ensure([], require => {

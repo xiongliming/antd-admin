@@ -24,6 +24,7 @@ export async function modifyFormulationService (data) {
   return request({
     url: api.dataOperation.modifyFormulationUrl(data.id),
     method: 'put',
+    data,
   })
 }
 

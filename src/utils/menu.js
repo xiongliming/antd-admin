@@ -20,6 +20,11 @@ module.exports = [
         name: 'View Test Data',
         icon: 'file-text',
       },
+      {
+        key: 'searcher',
+        name: 'Search Test Data',
+        icon: 'search',
+      },
     ],
   },
   {

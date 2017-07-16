@@ -209,12 +209,19 @@ class FormulationFitTable extends React.Component {
   onTrainFormulation = (index) => {
     this.props.dispatch({
       type: 'dataAnalysis/trainFormulationModel',
-      payload: {id: index, action: 'start', epochs: this.state.trainingEpochs}
+      payload: {id: index, action: 'train', epochs: this.state.trainingEpochs}
     });
+  };
+  onSaveTrainedModel = (index) => {
+    this.props.dispatch({
+      type: 'dataAnalysis/saveFormulationModelGridToDB',
+      payload: {id: index, action: 'saveToDB'}
+    });
+    this.setState({})
   };
 
   componentDidMount() {
-    console.log(this.state.trainFlag);
+    // console.log(this.state.trainFlag);
     // console.log('didmount>>> ');
     if (this.state.trainFlag === 'training' && this.timer === null) {
       this.timer = setInterval(() => {
@@ -250,27 +257,9 @@ class FormulationFitTable extends React.Component {
     }
   }
 
-  // componentWillMount() {
-  //   console.log('mount>>> ', this.timer)
-  // }
   componentWillUnmount() {
     clearInterval(this.timer);
   }
-
-  //
-  // componentWillUpdate(prevProps, prevState) {
-  //   if (this.state.trainingEpoch !== 0 && this.state.trainingEpoch === this.state.trainingEpochs) {
-  //     clearInterval(this.timer);
-  //     console.log('willUpdate>>> ', this.timer)
-  //   }
-  // }
-  //
-  // componentDidUpdate(prevProps, prevState) {
-  //   if (this.state.trainFlag == 'trained') {
-  //     console.log('didUpdate>>> ', this.timer);
-  //   }
-  // }
-
 
   render() {
     const {dataSource} = this.state;
@@ -278,18 +267,36 @@ class FormulationFitTable extends React.Component {
     return (
       <div>
         <Row type="flex" justify="center" style={{margin: '0px auto 16px auto'}} gutter={16}>
+          <Col style={{margin: '8px 0px 0px 0px'}}>
+            <span>Training Epoch: </span>
+          </Col>
           <Col>
-            <InputNumber size="large" min={10} max={1000} placeholder="Input Epoch" style={{width: '85px'}}
+            <InputNumber size="large" min={10} max={1000} defaultValue={10} style={{width: '85px'}}
+                         disabled={this.state.trainFlag === 'training'}
                          onChange={(value) => {
                            value > 9 ? this.setState({trainingEpochs: value}) : this.setState({trainingEpochs: 10})
                          }}
             />
           </Col>
+        </Row>
+        <Row type="flex" justify="center" style={{margin: '0px auto 16px auto'}} gutter={16}>
           <Col>
-            <Popconfirm title="Sure to Fit this Formulation? This operation may take some time." placement="bottomLeft"
+            <Popconfirm title={<div><p>Sure to Fit this Formulation?</p><p>This operation may take some time.</p></div>}
+                        placement="bottomLeft"
+                        onConfirm={() => this.onSaveTrainedModel(this.state.id)} arrowPointAtCenter>
+              <Button icon='save' size='large'
+                      disabled={this.state.trainFlag !== 'trained'}>
+                {this.state.trainFlag !== 'training' ? 'Save' : 'Saving'}
+              </Button>
+            </Popconfirm>
+          </Col>
+          <Col>
+            <Popconfirm title={<div><p>Sure to Fit this Formulation?</p><p>This operation may take some time.</p></div>}
+                        placement="bottomLeft"
                         onConfirm={() => this.onTrainFormulation(this.state.id)} arrowPointAtCenter>
-              <Button type="primary" icon='calculator' size='large'
-                      loading={this.state.trainFlag === 'training'}>{this.state.trainFlag !== 'training' ? 'Train Model' : 'Training'}</Button>
+              <Button type="primary" icon='calculator' size='large' loading={this.state.trainFlag === 'training'}>
+                {this.state.trainFlag !== 'training' ? 'Train' : 'Training'}
+              </Button>
             </Popconfirm>
           </Col>
         </Row>

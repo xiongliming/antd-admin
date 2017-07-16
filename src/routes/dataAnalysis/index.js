@@ -76,16 +76,16 @@ const Analyser = ({dispatch, dataAnalysis, loading}) => {
   };
 
   const PlotConfigRow = () => {
-    const {selectedFormulationID, selectFormulationTrainedGrid, plot3dPlotTarget, plot3dIsShowGrid} = dataAnalysis;
+    const {selectedFormulationID, selectedFormulationTrainedResult, plot3dPlotTarget, plot3dIsShowGrid} = dataAnalysis;
     // FormulationEditTable
-    if (selectedFormulationID !== 0 && isEmpty(selectFormulationTrainedGrid)) {
+    if (selectedFormulationID !== 0 && isEmpty(selectedFormulationTrainedResult)) {
       return (
         <Row gutter={16} type="flex" style={{padding: '5px 0px 5px 0px', margin: '0px 0px 16px 16px'}}>
           <Col>
             <label>Plot data: </label>
             <Switch checkedChildren="Tan Delta" unCheckedChildren="E'"
                     checked={plot3dPlotTarget === 'Tan Delta'}
-                    disabled={selectFormulationTrainedGrid === {}}
+                    disabled={selectedFormulationTrainedResult === {}}
                     onChange={(checked) => {
                       dispatch({
                         type: 'dataAnalysis/updatePlot3dPlotTarget',
@@ -96,7 +96,7 @@ const Analyser = ({dispatch, dataAnalysis, loading}) => {
           </Col>
         </Row>
       )
-    } else if (selectedFormulationID !== 0 && !isEmpty(selectFormulationTrainedGrid)) {
+    } else if (selectedFormulationID !== 0 && !isEmpty(selectedFormulationTrainedResult)) {
       return (
         <Row gutter={16} type="flex" style={{padding: '5px 0px 5px 0px', margin: '0px 0px 16px 16px'}}>
           <Col>
@@ -122,20 +122,20 @@ const Analyser = ({dispatch, dataAnalysis, loading}) => {
   };
 
   const Plot3dCard = () => {
-    const {selectedFormulationID, selectFormulationTrainedGrid, plot3dPlotTarget, plot3dIsShowGrid, formulationList} = dataAnalysis;
-    if (selectedFormulationID !== 0 && isEmpty(selectFormulationTrainedGrid)) {
+    const {selectedFormulationID, selectedFormulationTrainedResult, plot3dPlotTarget, plot3dIsShowGrid, formulationList} = dataAnalysis;
+    if (selectedFormulationID !== 0 && isEmpty(selectedFormulationTrainedResult)) {
       const currentFormulation = formulationList.filter((item) => item.id === selectedFormulationID)[0];
-      if (currentFormulation['lines'] && currentFormulation['lines'].length !== 0 && isEmpty(selectFormulationTrainedGrid)) {
+      if (currentFormulation['lines'] && currentFormulation['lines'].length !== 0 && isEmpty(selectedFormulationTrainedResult)) {
         return (
           <Card bordered={false} bodyStyle={{padding: '8px 8px 8px 8px'}}>
             <Plot3d lines={currentFormulation['lines']} plotTarget={plot3dPlotTarget}/>
           </Card>
         )
       }
-    } else if (selectedFormulationID !== 0 && !isEmpty(selectFormulationTrainedGrid)) {
+    } else if (selectedFormulationID !== 0 && !isEmpty(selectedFormulationTrainedResult)) {
       return (
         <Card bordered={false} bodyStyle={{padding: '8px 8px 8px 8px'}}>
-          <Plot3dTrained gridLines={selectFormulationTrainedGrid} isShowGrid={plot3dIsShowGrid}/>
+          <Plot3dTrained gridLines={selectedFormulationTrainedResult} isShowGrid={plot3dIsShowGrid}/>
         </Card>
       )
     }

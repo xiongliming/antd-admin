@@ -53,9 +53,9 @@ const App = ({ children, location, dispatch, app }) => {
   return (
     <div>
       <Helmet>
-        <title>ANTD ADMIN</title>
+        <title>{config.name}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="icon" href={config.logoSrc} type="image/x-icon" />
+        <link rel="icon" href={config.logo} type="image/x-icon" />
         {config.iconFontUrl ? <script src={config.iconFontUrl}></script> : ''}
       </Helmet>
       <div className={classnames(styles.layout, { [styles.fold]: isNavbar ? false : siderFold }, { [styles.withnavbar]: isNavbar })}>

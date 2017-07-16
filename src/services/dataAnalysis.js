@@ -36,6 +36,14 @@ export async function trainFormulationModelService (data) {
   })
 }
 
+export async function saveFormulationModelGridToDBService (data) {
+  return request({
+    url: api.dataAnalysis.saveFormulationModelGridToDBUrl(data.id),
+    method: 'get',
+    data,
+  })
+}
+
 export async function getFormulationModelService (data) {
   return request({
     url: api.dataAnalysis.trainFormulationModelUrl(data.id),

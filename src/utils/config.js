@@ -44,6 +44,7 @@ module.exports = {
     dataAnalysis: {
       trainFormulationModelUrl: (id) => remoteURL + apiPrefix + `/dataAnalysis/formulations/${id}/models`,          // GET, json
       getFormulationTrainingLogUrl: (id) => remoteURL + apiPrefix + `/dataAnalysis/formulations/${id}/logs`,          // GET, json
+      saveFormulationModelGridToDBUrl: (id) => remoteURL + apiPrefix + `/dataAnalysis/formulations/${id}/models`,          // GET, json
 
       getFormulationListUrl: remoteURL + apiPrefix + `/dataAnalysis/formulations/`,          // GET
       getFormulationDataListUrl: (id) => remoteURL + apiPrefix + `/dataAnalysis/formulations/${id}/data`,    // GET, xhr

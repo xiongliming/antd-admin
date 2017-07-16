@@ -31,7 +31,7 @@ const userPermission = {
     'dashboard', 'chart',
   ],
   ADMIN: [
-    'dashboard', 'dataOperation', 'dataOperation/uploader', 'dataOperation/viewer', 'dataAnalysis', 'users',
+    'dashboard', 'dataOperation', 'dataOperation/uploader', 'dataOperation/viewer', 'dataOperation/searcher', 'dataAnalysis', 'users',
     // 'request',
     // 'UIElement', 'UIElement/iconfont', 'UIElement/dataTable', 'UIElement/dropOption', 'UIElement/search', 'UIElement/editor', 'UIElement/layer',
     // 'chart', 'chart/lineChart', 'chart/barChart', 'chart/areaChart',
@@ -71,7 +71,7 @@ module.exports = {
       const now = new Date();
       now.setDate(now.getDate() + 1);
       res.cookie('token', JSON.stringify({id: user[0].id, deadline: now.getTime()}), {
-        maxAge: 900000,
+        maxAge: 7200000,
         httpOnly: true,
       });
       res.json({success: true})
