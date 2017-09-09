@@ -1,10 +1,11 @@
 import { request, config } from '../utils'
-const { api } = config
-const { userLogin } = api
+const { api } = config;
+const { userLogin } = api;
 
-export async function login (data) {
+export async function loginService (data) {
   return request({
-    url: userLogin,
+    url: api.user.loginUrl,
+    // url: userLogin,
     method: 'post',
     data,
   })

@@ -3,9 +3,11 @@
  */
 import React from 'react'
 import {cloneDeep} from 'lodash'
-import {Row, Col, Button, InputNumber, Form} from 'antd';
+import {Row, Col, Button, InputNumber, Form, Card} from 'antd';
 import {connect} from 'dva'
 import styles from './index.less'
+import {NestedTable} from '../../../components/DataTable/NestedDataTable'
+
 const FormItem = Form.Item;
 const moment = require('moment');
 
@@ -25,59 +27,68 @@ const formItemLayout = {
   wrapperCol: {span: 8},
 };
 
-const fieldProps = [
-  {
-    key: 1,
-    label: 'Minimum Temperature',
-    fieldName: 'temperatureMin',
-    message: 'Please input the minimum temperature. ',
-  },
-  {
-    key: 2,
-    label: 'Minimum Frequency',
-    fieldName: 'frequencyMin',
-    message: 'Please input the minimum frequency. ',
-  },
-  {
-    key: 3,
-    label: 'Minimum Tan Delta',
-    fieldName: 'tanDeltaMin',
-    message: 'Please input the minimum tangent delta. ',
-  },
-  {
-    key: 4,
-    label: 'Minimum E\'',
-    fieldName: 'ePrimeMin',
-    message: 'Please input the minimum E\'. ',
-  },
-  {
-    key: 5,
-    label: 'Maximum Temperature',
-    fieldName: 'temperatureMax',
-    message: 'Please input the maximum temperature. ',
-  },
-  {
-    key: 6,
-    label: 'Maximum Frequency',
-    fieldName: 'frequencyMax',
-    message: 'Please input the maximum frequency. ',
-  },
-  {
-    key: 7,
-    label: 'Maximum Tan Delta',
-    fieldName: 'tanDeltaMax',
-    message: 'Please input the maximum tangent delta. ',
-  },
-  {
-    key: 8,
-    label: 'Maximum E\'',
-    fieldName: 'ePrimeMax',
-    message: 'Please input the maximum E\'. ',
-  },
-];
 
 const SearchForm = Form.create()(
-  ({form, dispatch}) => {
+  ({form, dispatch, initialValue}) => {
+    const fieldProps = [
+      {
+        key: 1,
+        label: 'Minimum Temperature',
+        fieldName: 'temperatureMin',
+        initialValue: initialValue.temperatureMin,
+        message: 'Please input the minimum temperature. ',
+      },
+      {
+        key: 2,
+        label: 'Maximum Temperature',
+        fieldName: 'temperatureMax',
+        initialValue: initialValue.temperatureMax,
+        message: 'Please input the maximum temperature. ',
+      },
+      {
+        key: 3,
+        label: 'Minimum Frequency',
+        fieldName: 'frequencyMin',
+        initialValue: initialValue.frequencyMin,
+        message: 'Please input the minimum frequency. ',
+      },
+      {
+        key: 4,
+        label: 'Maximum Frequency',
+        fieldName: 'frequencyMax',
+        initialValue: initialValue.frequencyMax,
+        message: 'Please input the maximum frequency. ',
+      },
+      {
+        key: 5,
+        label: 'Minimum Tan Delta',
+        fieldName: 'tanDeltaMin',
+        initialValue: initialValue.tanDeltaMin,
+        message: 'Please input the minimum tangent delta. ',
+      },
+      {
+        key: 6,
+        label: 'Maximum Tan Delta',
+        fieldName: 'tanDeltaMax',
+        initialValue: initialValue.tanDeltaMax,
+        message: 'Please input the maximum tangent delta. ',
+      },
+      {
+        key: 7,
+        label: 'Minimum E\'',
+        fieldName: 'ePrimeMin',
+        initialValue: initialValue.ePrimeMin,
+        message: 'Please input the minimum E\'. ',
+      },
+      {
+        key: 8,
+        label: 'Maximum E\'',
+        fieldName: 'ePrimeMax',
+        initialValue: initialValue.ePrimeMax,
+        message: 'Please input the maximum E\'. ',
+      },
+    ];
+    console.log(initialValue);
     const {getFieldDecorator} = form;
     const children = [];
     const colCountOfRow = 4;
@@ -86,13 +97,13 @@ const SearchForm = Form.create()(
         <Col span={24 / colCountOfRow} key={fieldProps[i].key}>
           <FormItem {...formItemLayout} label={fieldProps[i].label}>
             {getFieldDecorator(fieldProps[i].fieldName, {
-              initialValue: 0,
+              initialValue: fieldProps[i].initialValue,
               validateTrigger: ['onChange',],
               rules: [{
                 required: true,
                 message: fieldProps[i].message,
               }],
-            })(<InputNumber />)}
+            })(<InputNumber/>)}
           </FormItem>
         </Col>
       );
@@ -117,7 +128,6 @@ const SearchForm = Form.create()(
       e.preventDefault();
       form.validateFields((err, values) => {
         let errorFlag = false;
-        console.log('Received values of form: ', values);
         if (values.temperatureMin > values.temperatureMax) {
           errorFlag = true;
           form.setFields({
@@ -148,18 +158,18 @@ const SearchForm = Form.create()(
         }
         if (!errorFlag)
           dispatch({
-            type: 'dataOperation_searcher/updateSearchItems',
+            type: 'dataOperation_searcher/searchData',
             payload: values,
           })
       });
     };
     return (
-      <div className={styles.content}>
-        <Form onSubmit={handleSearch}>
+      <div>
+        <Form className={styles.content} onSubmit={handleSearch}>
           <Row type="flex" justify="start">{children}</Row>
           <Row>
             <Col span={24} style={{textAlign: 'right'}}>
-              <Button type="primary" htmlType="submit">Search</Button>
+              <Button type="primary" htmlType="submit">Query</Button>
               <Button style={{marginLeft: 8}} onClick={handleReset}>Clear</Button>
             </Col>
           </Row>
@@ -170,7 +180,18 @@ const SearchForm = Form.create()(
 );
 
 const Viewer = ({dispatch, dataOperation_searcher, loading}) => {
-  return <SearchForm dispatch={dispatch}/>
+  return (
+    <Col>
+      <Row>
+        <SearchForm dispatch={dispatch} initialValue={dataOperation_searcher}/>
+      </Row>
+      <Row style={{margin: '24px 0px 0px 0px'}}>
+        <Card bordered={false} bodyStyle={{padding: '24px 12px 24px 12px',}}>
+          <NestedTable dataSource={dataOperation_searcher.queryResult}/>
+        </Card>
+      </Row>
+    </Col>
+  )
 };
 
 const mapStateToProps = (state) => {

@@ -5,10 +5,10 @@ import { classnames, config } from '../utils'
 import { Helmet } from 'react-helmet'
 import '../themes/index.less'
 
-const { Header, Bread, Footer, Sider, styles } = Layout
+const { Header, Bread, Footer, Sider, styles } = Layout;
 
 const App = ({ children, location, dispatch, app }) => {
-  const { user, siderFold, darkTheme, isNavbar, menuPopoverVisible, navOpenKeys } = app
+  const { user, siderFold, darkTheme, isNavbar, menuPopoverVisible, navOpenKeys } = app;
 
   const headerProps = {
     user,
@@ -29,7 +29,7 @@ const App = ({ children, location, dispatch, app }) => {
     changeOpenKeys (openKeys) {
       dispatch({ type: 'app/handleNavOpenKeys', payload: { navOpenKeys: openKeys } })
     },
-  }
+  };
 
   const siderProps = {
     user,
@@ -41,10 +41,10 @@ const App = ({ children, location, dispatch, app }) => {
       dispatch({ type: 'app/changeTheme' })
     },
     changeOpenKeys (openKeys) {
-      localStorage.setItem('navOpenKeys', JSON.stringify(openKeys))
+      localStorage.setItem('navOpenKeys', JSON.stringify(openKeys));
       dispatch({ type: 'app/handleNavOpenKeys', payload: { navOpenKeys: openKeys } })
     },
-  }
+  };
 
   if (config.openPages && config.openPages.indexOf(location.pathname) > -1) {
     return <div>{children}</div>
@@ -81,13 +81,13 @@ const App = ({ children, location, dispatch, app }) => {
       </div>
     </div>
   )
-}
+};
 
 App.propTypes = {
   children: PropTypes.element.isRequired,
   location: PropTypes.object,
   dispatch: PropTypes.func,
   app: PropTypes.object,
-}
+};
 
 export default connect(({ app }) => ({ app }))(App)

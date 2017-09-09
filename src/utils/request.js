@@ -1,6 +1,6 @@
 import axios from 'axios'
 import qs from 'qs'
-import { YQL, CORS, baseURL } from './config'
+import {YQL, CORS, baseURL} from './config'
 import jsonp from 'jsonp'
 import lodash from 'lodash'
 
@@ -14,6 +14,11 @@ const fetch = (options) => {
     fetchType,
     url,
   } = options;
+  options.header = {
+    'Access-Control-Allow-Origin': '*',
+    crossDomain: true,
+    xhrFields: {withCredentials: true}
+  };
 
   if (fetchType === 'JSONP') {
     return new Promise((resolve, reject) => {
@@ -25,7 +30,7 @@ const fetch = (options) => {
         if (error) {
           reject(error)
         }
-        resolve({ statusText: 'OK', status: 200, data: result })
+        resolve({statusText: 'OK', status: 200, data: result})
       })
     })
   } else if (fetchType === 'YQL') {
@@ -37,7 +42,7 @@ const fetch = (options) => {
     case 'get':
       return axios.get(`${url}${!lodash.isEmpty(data) ? `?${qs.stringify(data)}` : ''}`);
     case 'delete':
-      return axios.delete(url, { data });
+      return axios.delete(url, {data});
     case 'head':
       return axios.head(url, data);
     case 'post':
@@ -51,7 +56,7 @@ const fetch = (options) => {
   }
 };
 
-export default function request (options) {
+export default function request(options) {
   if (options.url && options.url.indexOf('//') > -1) {
     const origin = `${options.url.split('//')[0]}//${options.url.split('//')[1].split('/')[0]}`;
     if (window.location.origin !== origin) {
@@ -66,7 +71,7 @@ export default function request (options) {
   }
 
   return fetch(options).then((response) => {
-    const { statusText, status } = response;
+    const {statusText, status} = response;
     let data = options.fetchType === 'YQL' ? response.data.query.results.json : response.data;
     return {
       success: true,
@@ -75,17 +80,17 @@ export default function request (options) {
       ...data,
     }
   }).catch((error) => {
-    const { response } = error;
+    const {response} = error;
     let message;
     let status;
     if (response) {
       status = response.status;
-      const { data, statusText } = response;
+      const {data, statusText} = response;
       message = data.message || statusText
     } else {
       status = 600;
       message = 'Network Error'
     }
-    return { success: false, status, message }
+    return {success: false, status, message}
   })
 }

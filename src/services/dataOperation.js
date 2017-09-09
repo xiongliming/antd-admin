@@ -5,6 +5,14 @@ import { request, config } from '../utils'
 const { api } = config;
 
 
+export async function searchDataService (data) {
+  return request({
+    url: api.dataOperation.searchDataUrl,
+    method: 'get',
+    data,
+  })
+}
+
 export async function getFormulationListService () {
   return request({
     url: api.dataOperation.getFormulationListUrl,

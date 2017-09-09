@@ -38,7 +38,7 @@ export default {
   subscriptions: {
     setup({ history, dispatch }) {
       return history.listen(({ pathname }) => {
-        if (pathname === '/dashboard/') {
+        if (pathname === '/dashboard/' || pathname === '/') {
           dispatch({ type: 'getDashboardData' });
         }
       });
@@ -47,7 +47,7 @@ export default {
   effects: {
     *getDashboardData ({ payload }, { put, call, select }) {
       const data = yield call(getDashboardDataService);
-      console.log(data);
+      // console.log(data);
       yield put({ type: 'updateDashboardData', payload: data })
     },
   },

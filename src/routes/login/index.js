@@ -4,7 +4,7 @@ import { Button, Row, Form, Input, Alert } from 'antd'
 import { config } from '../../utils'
 import styles from './index.less'
 
-const FormItem = Form.Item
+const FormItem = Form.Item;
 
 const Login = ({
   login,
@@ -14,7 +14,7 @@ const Login = ({
     validateFieldsAndScroll,
   },
 }) => {
-  const { loginLoading, loginError } = login
+  const { loginLoading, loginError } = login;
 
   function handleOk () {
     validateFieldsAndScroll((errors, values) => {
@@ -61,12 +61,12 @@ const Login = ({
       </form>
     </div>
   )
-}
+};
 
 Login.propTypes = {
   form: PropTypes.object,
   login: PropTypes.object,
   dispatch: PropTypes.func,
-}
+};
 
 export default connect(({ login }) => ({ login }))(Form.create()(Login))

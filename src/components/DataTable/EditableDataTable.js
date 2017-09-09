@@ -281,7 +281,7 @@ class FormulationFitTable extends React.Component {
         </Row>
         <Row type="flex" justify="center" style={{margin: '0px auto 16px auto'}} gutter={16}>
           <Col>
-            <Popconfirm title={<div><p>Sure to Fit this Formulation?</p><p>This operation may take some time.</p></div>}
+            <Popconfirm title={<div><p>Sure to Save this Model?</p><p>This operation may take some time.</p></div>}
                         placement="bottomLeft"
                         onConfirm={() => this.onSaveTrainedModel(this.state.id)} arrowPointAtCenter>
               <Button icon='save' size='large'
